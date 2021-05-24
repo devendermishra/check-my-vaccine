@@ -1,0 +1,17 @@
+
+.heading {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.search-filter {
+    border-color: cornflowerblue;
+    border-width: 2px;
+    border-radius: 5px;
+    border-style: double;
+}
+
+.search-condition {
+    margin-left: 5px;
+    padding-bottom: 10px;
+}

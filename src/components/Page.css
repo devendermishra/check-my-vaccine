@@ -1,0 +1,32 @@
+.page {
+    margin: 100px;
+    margin-left: 100px;
+    
+}
+
+.page-mobile {
+    border-color: cornflowerblue;
+    border-width: 2px;
+    border-radius: 5px;
+    border-style: double;
+    margin: 10px;
+}
+
+.row1 {
+    width: 50%;
+    display: table;
+}
+
+.row1-mobile {
+    width: 100%;
+    display: table;
+}
+
+.row2 {
+    width: 50%;
+    display: table;
+}
+
+.row2-mobile {
+    width: 100%;
+}
