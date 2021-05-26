@@ -31,6 +31,7 @@ export interface ApplicationState {
     selectedWeek?: number,
     selectedAge?: string,
     mode?: string,
+    status?: string,
 }
 
 export interface Action {

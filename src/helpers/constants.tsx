@@ -14,3 +14,6 @@ export const ageGroups = mapToList(ageTypes)
 
 export const doses = range(1, 2 + 1, 1).map(intToSelectionList)
 export const weeks = range(1, 18 + 1, 1).map(intToSelectionList)
+
+export const PINCODE_MODE = 'pincode'
+export const DISTRICT_MODE = 'district'

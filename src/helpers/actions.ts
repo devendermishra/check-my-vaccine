@@ -8,6 +8,7 @@ export const SELECT_DOSE = 'SELECT_DOSE'
 export const SELECT_WEEK = 'SELECT_WEEK'
 export const SELECT_AGE = 'SELECT_AGE'
 export const SET_MODE = 'SET_MODE'
+export const SET_STATUS = 'SET_STATUS'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -17,3 +18,4 @@ export const selectDose = (dose: number): Action => ({ type: SELECT_DOSE, data: 
 export const selectWeek = (week: number): Action => ({ type: SELECT_WEEK, data: week })
 export const selectAge = (age: string): Action => ({ type: SELECT_AGE, data: age })
 export const setMode = (mode: string): Action => ({type: SET_MODE, data: mode})
+export const setStatus = (status: string): Action => ({type: SET_STATUS, data: status})

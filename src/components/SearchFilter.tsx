@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types';
 import { AppBar, makeStyles } from '@material-ui/core'
-import { availableVaccines, ageGroups, weeks, doses} from '../helpers/constants'
+import {
+    availableVaccines, ageGroups,
+    weeks, doses, DISTRICT_MODE,
+    PINCODE_MODE, vaccineTypes, ageTypes
+} from '../helpers/constants'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
 import TextField from '@material-ui/core/TextField'
@@ -17,6 +21,12 @@ import Button from '@material-ui/core/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './SearchFilter.css'
 import { SelectElement } from '../helpers/types';
+import { useDispatch } from 'react-redux';
+import {
+    selectAge, selectDistrict, selectDose,
+    selectPincode, selectState, selectVaccine,
+    selectWeek, setMode
+} from '../helpers/actions';
 
 
 const SearchFilter = () => {
@@ -90,6 +100,7 @@ TabPanel.propTypes = {
     index: PropTypes.any.isRequired,
     value: PropTypes.any.isRequired,
 };
+
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
@@ -101,9 +112,13 @@ const useStyles = makeStyles((theme) => ({
 export const SearchFilterMobile = () => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
+    const dispatch = useDispatch()
+
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
+        dispatch(setMode(newValue === 0 ? DISTRICT_MODE : PINCODE_MODE))
     };
+
     return (<div className="search-filter">
         <p className="heading"><b>Search Filters</b></p>
         <div className={classes.root}>
@@ -124,19 +139,28 @@ export const SearchFilterMobile = () => {
 }
 
 const SearchByState = () => {
+    const dispatch = useDispatch()
     return (<div className="search-condition">
         <StateSelector label='Select State'
-            values={[{ id: 34, name: 'Uttar Pradesh' }]} callback={(value: number) => { }} /> <br />
-        <StateSelector label='Select District' values={[]} callback={(value: number) => { }} /><br />
+            values={[{ id: 34, name: 'Uttar Pradesh' }]}
+            callback={(value: number) => { dispatch(selectState(value)) }} /> <br />
+        <StateSelector label='Select District'
+            values={[]}
+            callback={(value: number) => { dispatch(selectDistrict(value)) }} /><br />
         <CommonSearch />
     </div>)
 }
 
 const SearchByPin = () => {
+    const dispatch = useDispatch()
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        dispatch(selectPincode(parseInt(event.target.value)))
+    }
     return (
         <div className="search-condition">
             <TextField id="standard-basic" label="Enter Pincode"
-                placeholder='Pincode' /><br/>
+                onChange={handleChange}
+                placeholder='Pincode' /><br />
             <CommonSearch />
         </div>)
 }
@@ -180,21 +204,36 @@ interface CommonSearchProps {
     inProgress?: boolean
 }
 const CommonSearch = (props: CommonSearchProps) => {
-    const {inProgress} = props
-    console.log('DEVENDER inprogress ' + JSON.stringify(inProgress))
+    const { inProgress } = props
+    const dispatch = useDispatch()
     const [state, setState] = useState(inProgress === undefined ? false : inProgress)
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
     const buttonText = state ? "Stop" : "Start"
 
-    return (<><StateSelector label="Vaccine Type" callback={() => {}}
-    values={availableVaccines} /><br />
-        <StateSelector label="Age Group" callback={() => {}}
-    values={ageGroups} /><br />
-        <StateSelector label="Week" callback={() => {}}
-    values={weeks} /><br />
-        <StateSelector label="Dose" callback={() => {}}
-    values={doses} /><br />
+    return (<><StateSelector label="Vaccine Type"
+        callback={(vaccineId: number) => {
+            dispatch(selectVaccine(vaccineTypes[vaccineId]))
+        }}
+        values={availableVaccines} /><br />
+
+        <StateSelector label="Age Group"
+            callback={(ageId: number) => {
+                dispatch(selectAge(ageTypes[ageId]))
+            }}
+            values={ageGroups} /><br />
+
+        <StateSelector label="Week"
+            callback={(week) => {
+                dispatch(selectWeek(week))
+            }}
+            values={weeks} /><br />
+
+        <StateSelector label="Dose"
+            callback={(dose) => {
+                dispatch(selectDose(dose))
+            }}
+            values={doses} /><br />
         <Button variant="contained" color={buttonColor} startIcon={buttonIcon}
             onClick={() => setState(!state)}>
             {buttonText}</Button>
