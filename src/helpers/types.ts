@@ -21,3 +21,18 @@ export type SearchInput = {
     vaccine?: string,
     dose?: number
 }
+
+export interface ApplicationState {
+    selectedState?: number,
+    selectedDistrict?: number,
+    selectedPin?: number,
+    selectedDose?: number,
+    selectedVaccine?: string,
+    selectedWeek?: number,
+    selectedAge?: string
+}
+
+export interface Action {
+    type: string,
+    data: any
+}
