@@ -1,6 +1,6 @@
 import {
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_MODE
 } from "./actions";
 import { Action, ApplicationState } from "./types";
 
@@ -12,7 +12,7 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
         case SELECT_STATE:
             return { ...state, selectedState: action.data as number }
         case SELECT_DISTRICT:
-            return { ...state, selectedDistrict: action.data as number, }
+            return { ...state, selectedDistrict: action.data as number }
         case SELECT_PINCODE:
             return { ...state, selectedPin: action.data as number }
         case SELECT_DOSE:
@@ -23,6 +23,8 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             return { ...state, selectedWeek: action.data as number }
         case SELECT_AGE:
             return { ...state, selectedAge: action.data as string }
+        case SET_MODE:
+            return { ...state, mode: action.data as string }
     }
 
     return state

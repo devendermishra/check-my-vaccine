@@ -29,7 +29,8 @@ export interface ApplicationState {
     selectedDose?: number,
     selectedVaccine?: string,
     selectedWeek?: number,
-    selectedAge?: string
+    selectedAge?: string,
+    mode?: string,
 }
 
 export interface Action {
