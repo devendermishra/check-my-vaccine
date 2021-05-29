@@ -5,7 +5,11 @@ export type SlotData = {
     date: string,
     slotsAvailable: number,
     vaccine: string,
-    dose: number
+    firstDose: number,
+    secondDose: number,
+    age: string,
+    feeType: string,
+    vaccineFee?: string,
 }
 
 export type SelectElement = {
@@ -29,7 +33,7 @@ export interface ApplicationState {
     selectedDose?: number,
     selectedVaccine?: string,
     selectedWeek?: number,
-    selectedAge?: string,
+    selectedAge?: number,
     mode?: string,
     status?: string,
 }

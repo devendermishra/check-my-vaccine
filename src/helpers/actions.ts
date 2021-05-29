@@ -16,6 +16,6 @@ export const selectPincode = (pincode: number): Action => ({ type: SELECT_PINCOD
 export const selectVaccine = (vaccine: string): Action => ({ type: SELECT_VACCINE, data: vaccine })
 export const selectDose = (dose: number): Action => ({ type: SELECT_DOSE, data: dose })
 export const selectWeek = (week: number): Action => ({ type: SELECT_WEEK, data: week })
-export const selectAge = (age: string): Action => ({ type: SELECT_AGE, data: age })
+export const selectAge = (age: number): Action => ({ type: SELECT_AGE, data: age })
 export const setMode = (mode: string): Action => ({type: SET_MODE, data: mode})
 export const setStatus = (status: string): Action => ({type: SET_STATUS, data: status})

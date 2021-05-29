@@ -6,24 +6,26 @@ import SearchFilter from './SearchFilter'
 import WhenFinished from './WhenFinished'
 import Result from './Result'
 import { SlotData } from '../helpers/types'
+import { useState } from 'react'
 
 export const Page = () => {
     const pageClass = !isMobile ? "page" : "page-mobile"
-    const slotData: Array<SlotData> = []
+    const [appState, setAppState] = useState('')
+    const [slotData, setSlotData] = useState([] as Array<SlotData>)
     return (<div className={pageClass}>
         {!isMobile && <div className="row1">
-            <SearchFilter />
+            <SearchFilter setSlotData={setSlotData} setAppState={setAppState} />
         </div>}
         {!isMobile && <div className="row2">
-            <WhenFinished />
-            <Result {...slotData} />
+            <WhenFinished {...appState}/>
+            <Result slotData={slotData} appState={appState} />
         </div>}
         {isMobile && <div className="row1-mobile">
-            <SearchFilter />
+            <SearchFilter setSlotData={setSlotData} setAppState={setAppState} />
         </div>}
         {isMobile && <div className="row2-mobile">
-            <Result {...slotData} />
-            <WhenFinished />
+            <Result slotData={slotData} appState={appState} />
+            <WhenFinished {...appState} />
         </div>}
     </div>)
 }

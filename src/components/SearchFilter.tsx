@@ -3,7 +3,7 @@ import { AppBar, makeStyles } from '@material-ui/core'
 import {
     availableVaccines, ageGroups,
     weeks, doses, DISTRICT_MODE,
-    PINCODE_MODE, vaccineTypes, ageTypes
+    PINCODE_MODE, vaccineTypes
 } from '../helpers/constants'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
@@ -20,22 +20,29 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './SearchFilter.css'
-import { SelectElement } from '../helpers/types';
-import { useDispatch } from 'react-redux';
+import { SelectElement, SlotData } from '../helpers/types';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     selectAge, selectDistrict, selectDose,
     selectPincode, selectState, selectVaccine,
     selectWeek, setMode
 } from '../helpers/actions';
+import { startMonitoring } from '../helpers/timer'
 
+interface SearchProps {
+    setSlotData: React.Dispatch<React.SetStateAction<SlotData[]>>
+    setAppState: React.Dispatch<React.SetStateAction<string>>
+}
 
-const SearchFilter = () => {
-    return (<><SearchFilterDesktop /></>)
+const SearchFilter = (props: SearchProps) => {
+    return (<><SearchFilterDesktop {...props} /></>)
 }
 
 export default SearchFilter
 
-const SearchFilterDesktop = () => {
+const SearchFilterDesktop = (props: SearchProps) => {
+    const dispatch = useDispatch()
+
     return (<div className="search-filter">
         <p className="heading"><b>Search Filters</b></p>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
@@ -43,20 +50,22 @@ const SearchFilterDesktop = () => {
                 <Col style={{ width: "min-content" }}>
                     <Nav variant="pills" className="flex-column">
                         <Nav.Item>
-                            <Nav.Link eventKey="first">Search by District</Nav.Link>
+                            <Nav.Link eventKey="first"
+                                onSelect={(eventKey) => dispatch(setMode(DISTRICT_MODE))}>Search by District</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="second">Search by Pincode</Nav.Link>
+                            <Nav.Link eventKey="second"
+                                onSelect={(eventKey) => dispatch(setMode(PINCODE_MODE))}>Search by Pincode</Nav.Link>
                         </Nav.Item>
                     </Nav>
                 </Col>
                 <Col>
                     <Tab.Content>
                         <Tab.Pane eventKey="first">
-                            <SearchByState />
+                            <SearchByState {...props} />
                         </Tab.Pane>
                         <Tab.Pane eventKey="second">
-                            <SearchByPin />
+                            <SearchByPin {...props} />
                         </Tab.Pane>
                     </Tab.Content>
                 </Col>
@@ -109,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 //Export to ignore warning
-export const SearchFilterMobile = () => {
+export const SearchFilterMobile = (props: SearchProps) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const dispatch = useDispatch()
@@ -129,16 +138,16 @@ export const SearchFilterMobile = () => {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <SearchByState />
+                <SearchByState {...props} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <SearchByPin />
+                <SearchByPin {...props} />
             </TabPanel>
         </div>
     </div>)
 }
 
-const SearchByState = () => {
+const SearchByState = (props: CommonSearchProps) => {
     const dispatch = useDispatch()
     return (<div className="search-condition">
         <StateSelector label='Select State'
@@ -147,11 +156,11 @@ const SearchByState = () => {
         <StateSelector label='Select District'
             values={[]}
             callback={(value: number) => { dispatch(selectDistrict(value)) }} /><br />
-        <CommonSearch />
+        <CommonSearch {...props} />
     </div>)
 }
 
-const SearchByPin = () => {
+const SearchByPin = (props: CommonSearchProps) => {
     const dispatch = useDispatch()
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(selectPincode(parseInt(event.target.value)))
@@ -161,7 +170,7 @@ const SearchByPin = () => {
             <TextField id="standard-basic" label="Enter Pincode"
                 onChange={handleChange}
                 placeholder='Pincode' /><br />
-            <CommonSearch />
+            <CommonSearch {...props} />
         </div>)
 }
 
@@ -202,9 +211,13 @@ const StateSelector = (props: StateSelectorProps) => {
 
 interface CommonSearchProps {
     inProgress?: boolean
+    setSlotData: React.Dispatch<React.SetStateAction<SlotData[]>>
+    setAppState: React.Dispatch<React.SetStateAction<string>>
 }
+
 const CommonSearch = (props: CommonSearchProps) => {
     const { inProgress } = props
+    const applicationState = useSelector(state => state)
     const dispatch = useDispatch()
     const [state, setState] = useState(inProgress === undefined ? false : inProgress)
     const buttonColor = state ? "secondary" : "primary"
@@ -219,7 +232,7 @@ const CommonSearch = (props: CommonSearchProps) => {
 
         <StateSelector label="Age Group"
             callback={(ageId: number) => {
-                dispatch(selectAge(ageTypes[ageId]))
+                dispatch(selectAge(ageId))
             }}
             values={ageGroups} /><br />
 
@@ -235,7 +248,10 @@ const CommonSearch = (props: CommonSearchProps) => {
             }}
             values={doses} /><br />
         <Button variant="contained" color={buttonColor} startIcon={buttonIcon}
-            onClick={() => setState(!state)}>
+            onClick={() => {
+                setState(!state)
+                startMonitoring(applicationState, 15, props.setSlotData, props.setAppState)
+            }}>
             {buttonText}</Button>
     </>)
 }

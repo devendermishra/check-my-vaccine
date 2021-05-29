@@ -22,7 +22,7 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
         case SELECT_WEEK:
             return { ...state, selectedWeek: action.data as number }
         case SELECT_AGE:
-            return { ...state, selectedAge: action.data as string }
+            return { ...state, selectedAge: action.data as number }
         case SET_MODE:
             return { ...state, mode: action.data as string }
     }
