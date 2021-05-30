@@ -1,5 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './WhenFinished.css'
 import { AppState } from '../helpers/types'
 import { DONE_STATE } from '../helpers/constants'
 

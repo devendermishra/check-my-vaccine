@@ -1,9 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import './Page.css'
 import { isMobile } from "react-device-detect"
 import SearchFilter from './SearchFilter'
 import Result from './Result'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
@@ -14,13 +13,7 @@ export const Page = () => {
     const [appState, setAppState] = useState({ appState: '' })
     const applicationState = useSelector(a => a)
     const dispatch = useDispatch()
-    useEffect(() => {
-        if (!("Notification" in window)) {
-            console.log("This browser does not support desktop notification");
-          } else {
-            Notification.requestPermission();
-          }
-    }, [])
+
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })

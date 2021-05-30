@@ -1,5 +1,4 @@
 import { ReactElement } from 'react'
-import 'bootstrap/dist/css/bootstrap.min.css'
 import './Result.css'
 import { ApplicationState, AppState } from '../helpers/types'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
