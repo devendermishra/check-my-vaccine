@@ -14,7 +14,7 @@ export interface District {
 }
 
 export interface DistrictResponse {
-    districts: Array<State>
+    districts: Array<District>
 }
 
 export interface VaccineSession {

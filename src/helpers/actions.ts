@@ -1,4 +1,4 @@
-import { Action } from "./types"
+import { Action, SlotData } from "./types"
 
 export const SELECT_STATE = 'SELECT_STATE'
 export const SELECT_DISTRICT = 'SELECT_DISTRICT'
@@ -9,6 +9,8 @@ export const SELECT_WEEK = 'SELECT_WEEK'
 export const SELECT_AGE = 'SELECT_AGE'
 export const SET_MODE = 'SET_MODE'
 export const SET_STATUS = 'SET_STATUS'
+export const SET_SLOT = 'SET_SLOT'
+export const SET_INTERVAL = 'SET_INTERVAL'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -19,3 +21,5 @@ export const selectWeek = (week: number): Action => ({ type: SELECT_WEEK, data: 
 export const selectAge = (age: number): Action => ({ type: SELECT_AGE, data: age })
 export const setMode = (mode: string): Action => ({type: SET_MODE, data: mode})
 export const setStatus = (status: string): Action => ({type: SET_STATUS, data: status})
+export const setSlot = (slots: SlotData[]): Action => ({type: SET_SLOT, data: slots})
+export const setInterval = (interval: number): Action => ({type: SET_INTERVAL, data: interval})

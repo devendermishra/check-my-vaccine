@@ -1,11 +1,11 @@
 import {
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_MODE
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_MODE, SET_SLOT
 } from "./actions";
-import { Action, ApplicationState } from "./types";
+import { Action, ApplicationState, SlotData } from "./types";
 
 
-const intialState: ApplicationState = {}
+const intialState: ApplicationState = {interval: 5}
 
 const reducer = (state = intialState, action: Action): ApplicationState => {
     switch (action.type) {
@@ -25,6 +25,10 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             return { ...state, selectedAge: action.data as number }
         case SET_MODE:
             return { ...state, mode: action.data as string }
+        case SET_SLOT:
+            return {...state, availableSlots: action.data as SlotData[]}
+        case SET_INTERVAL:
+            return {...state, interval: action.data as number}
     }
 
     return state

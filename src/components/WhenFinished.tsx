@@ -1,14 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './WhenFinished.css'
-import { isMobile } from "react-device-detect"
+import { AppState } from '../helpers/types'
+import { DONE_STATE } from '../helpers/constants'
 
-const WhenFinished = (appState: string) => {
-    const className = !isMobile ? "when-finished" : "when-finished-mobile"
-    return (<div className={className}>
+const WhenFinished = (appState: AppState) => {
+    return (<>{appState.appState == DONE_STATE && <div>
         <p>Go to Cowin Website to book Slot</p>
         <p>Go to Aarogya Setu App</p>
         <p>Go to Umang App</p>
-    </div>)
+    </div>}</>)
 }
 
 export default WhenFinished

@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { AppBar, makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import {
     availableVaccines, ageGroups,
     weeks, doses, DISTRICT_MODE,
@@ -7,31 +6,39 @@ import {
 } from '../helpers/constants'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
+import Popover from 'react-bootstrap/Popover'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import TextField from '@material-ui/core/TextField'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Nav from 'react-bootstrap/Nav'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import FormControl from '@material-ui/core/FormControl'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import WarningIcon from '@material-ui/icons/Warning'
 import CancelIcon from '@material-ui/icons/Cancel'
-import { useState } from 'react'
+import ReplayIcon from '@material-ui/icons/Replay'
+import { Dispatch, useEffect, useState } from 'react'
 import Select from '@material-ui/core/Select'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './SearchFilter.css'
-import { SelectElement, SlotData } from '../helpers/types';
-import { useDispatch, useSelector } from 'react-redux';
+import { AppState, SelectElement } from '../helpers/types'
+import { useDispatch } from 'react-redux'
 import {
     selectAge, selectDistrict, selectDose,
     selectPincode, selectState, selectVaccine,
-    selectWeek, setMode
-} from '../helpers/actions';
-import { startMonitoring } from '../helpers/timer'
+    selectWeek, setMode, setSlot
+} from '../helpers/actions'
+import { Theme } from '@material-ui/core'
+import { createStyles } from '@material-ui/core'
+import { getDistricts, getStates } from '../helpers/api'
+
 
 interface SearchProps {
-    setSlotData: React.Dispatch<React.SetStateAction<SlotData[]>>
-    setAppState: React.Dispatch<React.SetStateAction<string>>
+    setAppState: React.Dispatch<React.SetStateAction<AppState>>
+    checkSlotsCB: () => void
+    monitorSlotsCB: (completionCallback: () => void) => void
+    stopMonitorCB: () => void
 }
 
 const SearchFilter = (props: SearchProps) => {
@@ -41,74 +48,46 @@ const SearchFilter = (props: SearchProps) => {
 export default SearchFilter
 
 const SearchFilterDesktop = (props: SearchProps) => {
-    const dispatch = useDispatch()
-
     return (<div className="search-filter">
         <p className="heading"><b>Search Filters</b></p>
-        <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-            <Row>
-                <Col style={{ width: "min-content" }}>
-                    <Nav variant="pills" className="flex-column">
-                        <Nav.Item>
-                            <Nav.Link eventKey="first"
-                                onSelect={(eventKey) => dispatch(setMode(DISTRICT_MODE))}>Search by District</Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item>
-                            <Nav.Link eventKey="second"
-                                onSelect={(eventKey) => dispatch(setMode(PINCODE_MODE))}>Search by Pincode</Nav.Link>
-                        </Nav.Item>
-                    </Nav>
-                </Col>
-                <Col>
-                    <Tab.Content>
-                        <Tab.Pane eventKey="first">
-                            <SearchByState {...props} />
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="second">
-                            <SearchByPin {...props} />
-                        </Tab.Pane>
-                    </Tab.Content>
-                </Col>
-            </Row>
-        </Tab.Container>
+        <SimpleTabs {...props} />
     </div>)
 }
 
-function a11yProps(index: number) {
-    return {
-        id: `wrapped-tab-${index}`,
-        'aria-controls': `wrapped-tabpanel-${index}`,
-    };
-}
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
-}
-
-function TabPanel(props: TabPanelProps) {
-    const { children, value, index } = props;
+export function SimpleTabs(props: SearchProps) {
+    const classes = useStyles();
+    const dispatch = useDispatch()
+    const [key, setKey] = useState('dist');
+    useEffect(() => {
+        dispatch(setMode(key === 'dist' ? DISTRICT_MODE : PINCODE_MODE))
+    }, [dispatch, key])
 
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-        >
-            {value === index && (
-                <>
-                    <>{children}</>
-                </>)}
+        <div className={classes.root}>
+            <Tabs
+                variant="pills"
+                id="controlled-tab-example"
+                activeKey={key}
+                onSelect={(k: string | null) => {
+                    if (k) {
+                        dispatch(setMode(k === 'dist' ? DISTRICT_MODE : PINCODE_MODE))
+                        setKey(k)
+                    }
+                }
+                }
+            >
+                <Tab eventKey="dist" title="Search By District">
+                    <SearchByState {...props} />
+                    <CommonSearch {...props} />
+                </Tab>
+                <Tab eventKey="pin" title="Search By Pincode">
+                    <SearchByPin {...props} />
+                    <CommonSearch {...props} />
+                </Tab>
+            </Tabs>
         </div>
     );
 }
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -117,141 +96,247 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-//Export to ignore warning
-export const SearchFilterMobile = (props: SearchProps) => {
-    const classes = useStyles();
-    const [value, setValue] = useState(0);
-    const dispatch = useDispatch()
-
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue);
-        dispatch(setMode(newValue === 0 ? DISTRICT_MODE : PINCODE_MODE))
-    };
-
-    return (<div className="search-filter">
-        <p className="heading"><b>Search Filters</b></p>
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Tabs variant="pills" value={value} onChange={handleChange}>
-                    <Tab title="Search by District" label="Search by District" {...a11yProps(0)} />
-                    <Tab title="Search by Pincode" label="Search by Pincode" {...a11yProps(1)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <SearchByState {...props} />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                <SearchByPin {...props} />
-            </TabPanel>
-        </div>
-    </div>)
-}
-
 const SearchByState = (props: CommonSearchProps) => {
     const dispatch = useDispatch()
-    return (<div className="search-condition">
-        <StateSelector label='Select State'
-            values={[{ id: 34, name: 'Uttar Pradesh' }]}
-            callback={(value: number) => { dispatch(selectState(value)) }} /> <br />
-        <StateSelector label='Select District'
-            values={[]}
-            callback={(value: number) => { dispatch(selectDistrict(value)) }} /><br />
-        <CommonSearch {...props} />
-    </div>)
+    const [states, setStates] = useState([] as SelectElement[])
+    const [districts, setDistricts] = useState([] as SelectElement[])
+    useEffect(() => {
+        if (states.length <= 0) {
+            getStatesFromLocalOrAPI(setStates)
+        }
+    }, [states])
+
+    return (
+        <div style={{ display: 'flex', height: '64px' }}>
+            <Selector label='State'
+                values={states}
+                callback={(value: number) => {
+                    dispatch(selectState(value))
+                    getDistrictFromLocalOrAPI(setDistricts, value)
+                }} />&nbsp;&nbsp;
+            &nbsp;&nbsp;
+            <Selector label='District'
+                values={districts}
+                callback={(value: number) => { dispatch(selectDistrict(value)) }} />
+        </div>
+    )
 }
 
 const SearchByPin = (props: CommonSearchProps) => {
     const dispatch = useDispatch()
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(selectPincode(parseInt(event.target.value)))
+        dispatch(selectPincode(parseInt(event.target.value.trim())))
     }
     return (
-        <div className="search-condition">
-            <TextField id="standard-basic" label="Enter Pincode"
-                onChange={handleChange}
-                placeholder='Pincode' /><br />
-            <CommonSearch {...props} />
+        <div>
+            <div style={{ textAlign: 'left', display: 'flex', height: '64px' }}>
+                &nbsp;&nbsp;<TextField id="standard-basic" label="Enter Pincode"
+                    onChange={handleChange}
+                    style={{ margin: 0, padding: 0 }}
+                    placeholder='Pincode' />
+            </div>
         </div>)
 }
 
-interface StateSelectorProps {
+interface SelectorProps {
     children?: React.ReactNode;
     label: any;
     values: Array<SelectElement>;
     callback: (value: number) => void;
 }
 
-const StateSelector = (props: StateSelectorProps) => {
+const useSelectStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        formControl: {
+            margin: theme.spacing(1),
+            minWidth: 120,
+        },
+        selectEmpty: {
+            marginTop: theme.spacing(2),
+        },
+    }),
+);
+
+const Selector = (props: SelectorProps) => {
+    const classes = useSelectStyles();
     const { label, values, callback } = props;
     const [state, setState] = useState('')
     const data = values || [];
     return (
-        <>
-            <InputLabel id={"demo-simple-select-" + label}>{label}</InputLabel>
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={state}
-                onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                    setState(event.target.value as string)
-                    if (callback) {
-                        callback(event.target.value as number)
-                    }
-                }
-                }
-            >
-                {data.map(value => {
-                    return (<MenuItem value={value.id}
-                        key={value.name + value.id}>{value.name}</MenuItem>)
-                })}
-            </Select>
-        </>
+        <div>
+            <FormControl className={classes.formControl}>
+                <InputLabel id={"demo-simple-select-" + label}>{label}</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={state}
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                        setState(event.target.value as string)
+                        if (callback) {
+                            callback(event.target.value as number)
+                        }
+                    }}
+                >
+                    {data.map(value => {
+                        return (<MenuItem value={value.id}>{value.name}</MenuItem>)
+                    })}
+                </Select>
+            </FormControl>
+        </div>
     )
 }
 
 interface CommonSearchProps {
     inProgress?: boolean
-    setSlotData: React.Dispatch<React.SetStateAction<SlotData[]>>
-    setAppState: React.Dispatch<React.SetStateAction<string>>
+    setAppState: React.Dispatch<React.SetStateAction<AppState>>
+    checkSlotsCB: () => void
+    monitorSlotsCB: (completionCallback: () => void) => void
+    stopMonitorCB: () => void
 }
 
 const CommonSearch = (props: CommonSearchProps) => {
-    const { inProgress } = props
-    const applicationState = useSelector(state => state)
     const dispatch = useDispatch()
-    const [state, setState] = useState(inProgress === undefined ? false : inProgress)
+    const [state, setState] = useState(false)
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
-    const buttonText = state ? "Stop" : "Start"
+    const buttonText = state ? "Stop Monitoring" : "Monitor Slot"
 
-    return (<><StateSelector label="Vaccine Type"
-        callback={(vaccineId: number) => {
-            dispatch(selectVaccine(vaccineTypes[vaccineId]))
-        }}
-        values={availableVaccines} /><br />
+    return (<>
+        <br />
+        <div style={{ alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Selector label="Vaccine Type"
+                    callback={(vaccineId: number) => {
+                        dispatch(selectVaccine(vaccineTypes[vaccineId]))
+                    }}
+                    values={availableVaccines} /><br />
+                <Selector label="Dose"
+                    callback={(dose) => {
+                        dispatch(selectDose(dose))
+                    }}
+                    values={doses} /><br />
+            </div>
+        </div>
+        <br />
+        <div style={{ alignItems: 'start', alignContent: 'start', textAlign: 'left' }}>
+            <Selector label="Age Group"
+                callback={(ageId: number) => {
+                    dispatch(selectAge(ageId))
+                }}
+                values={ageGroups} /><br />
 
-        <StateSelector label="Age Group"
-            callback={(ageId: number) => {
-                dispatch(selectAge(ageId))
-            }}
-            values={ageGroups} /><br />
-
-        <StateSelector label="Week"
-            callback={(week) => {
-                dispatch(selectWeek(week))
-            }}
-            values={weeks} /><br />
-
-        <StateSelector label="Dose"
-            callback={(dose) => {
-                dispatch(selectDose(dose))
-            }}
-            values={doses} /><br />
-        <Button variant="contained" color={buttonColor} startIcon={buttonIcon}
-            onClick={() => {
-                setState(!state)
-                startMonitoring(applicationState, 15, props.setSlotData, props.setAppState)
-            }}>
-            {buttonText}</Button>
+            <Selector label="Week"
+                callback={(week) => {
+                    dispatch(selectWeek(week))
+                }}
+                values={weeks} />
+            <br /> <br />
+            &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
+                onClick={() => {
+                    dispatch(setSlot([]))
+                    props.checkSlotsCB()
+                }}>Check Slot</Button>
+            &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
+                onClick={() => {
+                    const monitorState = state
+                    setState(!state)
+                    dispatch(setSlot([]))
+                    if (!monitorState) {
+                        props.monitorSlotsCB(() => {
+                            setState(false)
+                        })
+                    } else {
+                        props.stopMonitorCB()
+                    }
+                }}>{buttonText}</Button>
+            &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
+                onClick={() => {
+                    window.location.reload()
+                }}>Reset</Button>
+            &nbsp;&nbsp;
+            <OverlayTrigger trigger="click" placement="right" overlay={Disclaimer}>
+            <Button variant="contained" color="default" startIcon={<WarningIcon />}>
+                Disclaimer</Button>
+            </OverlayTrigger>
+            <br /><br />
+        </div>
     </>)
 }
+
+const getStatesFromLocalOrAPI = (setStates: Dispatch<React.SetStateAction<SelectElement[]>>) => {
+    let stateList = []
+    const key = 'stateList'
+    const stateString = localStorage.getItem(key)
+    if (stateString) {
+        stateList = JSON.parse(stateString)
+        setStates(stateList)
+    } else {
+        getStates().then(response => {
+            let itemList: SelectElement[] = response.states
+                .map(x => { return { id: x.state_id, name: x.state_name } })
+            stateList = itemList
+            localStorage.setItem(key, JSON.stringify(stateList))
+            setStates(stateList)
+        })
+    }
+}
+
+const getDistrictFromLocalOrAPI = (setDistrict: Dispatch<React.SetStateAction<SelectElement[]>>,
+    stateId: number) => {
+    let stateList = []
+    const key = 'districtList-' + stateId
+    const stateString = localStorage.getItem(key)
+    if (stateString) {
+        stateList = JSON.parse(stateString)
+        setDistrict(stateList)
+    } else {
+        getDistricts(stateId).then(response => {
+            let itemList: SelectElement[] = response.districts
+                .map(x => { return { id: x.district_id, name: x.district_name } })
+            stateList = itemList
+            localStorage.setItem(key, JSON.stringify(stateList))
+            setDistrict(stateList)
+        })
+    }
+}
+
+const Disclaimer = (
+    <Popover id="disclaimer">
+        <Popover.Title as="h3">Disclaimer</Popover.Title>
+        <Popover.Content>
+            Disclaimer:
+            <ol>
+                <li>This is a third-party application. It does not facilitate any appointment
+                or booking of vaccine. Booking is to be done only by official medium
+                like Cowin portal, Aarogya Setu or Umang App.
+                </li>
+                <li>
+                    There is no correctness guarantee of the data. This application
+                    fetches data from the open API of Cowin. Responses may be
+                    cached or delayed or withheld by these APIs.
+                </li>
+                <li>
+                    Considering above point, it does not guarantee any availability of the slot.
+                </li>
+                <li>
+                    We have no responsibility of any event arising due to the use of this website.
+                </li>
+                <li>
+                    This website or app does not store any personal data. It does
+                    not expect or store any cookie. It neither expect any personal
+                    data in network communication.
+                </li>
+                <li>
+                    Browser local storage is being used to provide smooth experience.
+                    Only state and district data is stored. There is no personal data
+                    stored. This can be viewed in local storage settings of the browser.
+                </li>
+                <li>
+                    This website is open source. User is free to use and distribute.
+                    Also, user can modify its code as per the requirement. But cannot claim
+                    copyright over that.
+                </li>
+            </ol>
+        </Popover.Content>
+    </Popover>
+);

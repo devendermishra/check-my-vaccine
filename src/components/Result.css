@@ -1,14 +1,3 @@
-.result {
-    width: 50%;
-    display: table-cell;
-    border-color: cornflowerblue;
-    border-width: 2px;
-    border-radius: 5px;
-    border-style: double;
-    margin-top: 50px;
-    margin-left: 50px;
-}
-
 .result-mobile {
     border-color: cornflowerblue;
     border-width: 2px;
