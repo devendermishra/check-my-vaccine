@@ -170,5 +170,5 @@ function matchVaccine(session: VaccineSession, selectedVaccine: string | undefin
 
 function matchAge(session: VaccineSession, selectedAge: number | undefined) {
     return !selectedAge
-        || (selectedAge >= session.min_age_limit)
+        || (selectedAge === session.min_age_limit)
 }

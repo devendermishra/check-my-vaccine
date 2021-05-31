@@ -310,6 +310,12 @@ const Disclaimer = (
                 or booking of vaccine. Booking is to be done only by official medium
                 like Cowin portal, Aarogya Setu or Umang App.
                 </li>
+                <li>Please check your state or local guidelines for vaccination.</li>
+                <li>Please follow Covid-appropriate behaviour and keep yourself safe.</li>
+                <li>Please always consult qualified doctor for any symptoms.
+                    Do not self-medicate or follow other's prescription.
+                    Do not delay testing and doctor consultation on any doubt.
+                </li>
                 <li>
                     There is no correctness guarantee of the data. This application
                     fetches data from the open API of Cowin. Responses may be
