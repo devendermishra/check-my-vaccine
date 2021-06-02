@@ -7,13 +7,15 @@ import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
 import { setSlot } from '../helpers/actions'
+import { selectLanguage } from '../helpers/multilang'
+import { ApplicationState } from '../helpers/types'
 
 export const Page = () => {
     const pageClass = !isMobile ? "page" : "page-mobile"
     const [appState, setAppState] = useState({ appState: '' })
-    const applicationState = useSelector(a => a)
+    const applicationState = useSelector(a => a) as ApplicationState
     const dispatch = useDispatch()
-
+    selectLanguage(applicationState.language ? applicationState.language: 'en')
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })

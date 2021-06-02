@@ -44,6 +44,7 @@ export interface ApplicationState {
     status?: string
     availableSlots?: SlotData[]
     interval?: number
+    language? : string
 }
 
 export interface Action {

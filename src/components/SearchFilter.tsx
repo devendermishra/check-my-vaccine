@@ -6,8 +6,6 @@ import {
 } from '../helpers/constants'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
-import Popover from 'react-bootstrap/Popover'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import TextField from '@material-ui/core/TextField'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import FormControl from '@material-ui/core/FormControl'
@@ -17,6 +15,7 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import ReplayIcon from '@material-ui/icons/Replay'
 import { Dispatch, useEffect, useState } from 'react'
 import Select from '@material-ui/core/Select'
+import Modal from 'react-bootstrap/Modal'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
@@ -33,6 +32,7 @@ import { Theme } from '@material-ui/core'
 import { createStyles } from '@material-ui/core'
 import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
+import { LanguageSelector } from './LanguageSelector'
 
 
 interface SearchProps {
@@ -50,7 +50,7 @@ export default SearchFilter
 
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
-        <p className="heading"><b>{_T('FILTERS')}</b></p>
+        <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;<LanguageSelector/></p>
         <SimpleTabs {...props} />
     </div>)
 }
@@ -200,7 +200,7 @@ const CommonSearch = (props: CommonSearchProps) => {
     const [state, setState] = useState(false)
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
-    const buttonText = state ? _T('STOP'): _T('MONITOR')
+    const buttonText = state ? _T('STOP') : _T('MONITOR')
 
     return (<>
         <br />
@@ -255,10 +255,7 @@ const CommonSearch = (props: CommonSearchProps) => {
                     window.location.reload()
                 }}>{_T('RESET')}</Button>
             &nbsp;&nbsp;
-            <OverlayTrigger trigger="click" placement="right" overlay={Disclaimer}>
-            <Button variant="contained" color="default" startIcon={<WarningIcon />}>
-                {_T('DISCL')}</Button>
-            </OverlayTrigger>
+            <DisclaimerModal />&nbsp;&nbsp;
             <br /><br />
         </div>
     </>)
@@ -301,23 +298,33 @@ const getDistrictFromLocalOrAPI = (setDistrict: Dispatch<React.SetStateAction<Se
     }
 }
 
-const Disclaimer = (
-    <Popover id="disclaimer">
-        <Popover.Title as="h3">{_T('DISCL')}</Popover.Title>
-        <Popover.Content>
-        {_T('DISCL')}:
-            <ol>
-                <li>{_T('DISC1')}</li>
-                <li>{_T('DISC2')}</li>
-                <li>{_T('DISC3')}</li>
-                <li>{_T('DISC4')}</li>
-                <li>{_T('DISC5')}</li>
-                <li>{_T('DISC6')}</li>
-                <li>{_T('DISC7')}</li>
-                <li>{_T('DISC8')}</li>
-                <li>{_T('DISC9')}</li>
-                <li>{_T('DISC10')}</li>
-            </ol>
-        </Popover.Content>
-    </Popover>
-);
+const DisclaimerModal = () => {
+    const [show, setShow] = useState(false)
+    const handleClose = () => setShow(false)
+    const handleShow = () => setShow(true)
+    return (
+        <>
+            <Button variant="contained" color="default"
+                onClick={handleShow}
+                startIcon={<WarningIcon />}>
+                {_T('DISCL')}</Button>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeLabel="" closeButton>
+                    <Modal.Title>{_T('DISCL')}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body><ol>
+                    <li>{_T('DISC1')}</li>
+                    <li>{_T('DISC2')}</li>
+                    <li>{_T('DISC3')}</li>
+                    <li>{_T('DISC4')}</li>
+                    <li>{_T('DISC5')}</li>
+                    <li>{_T('DISC6')}</li>
+                    <li>{_T('DISC7')}</li>
+                    <li>{_T('DISC8')}</li>
+                    <li>{_T('DISC9')}</li>
+                    <li>{_T('DISC10')}</li>
+                </ol></Modal.Body>
+            </Modal>
+        </>
+    )
+}

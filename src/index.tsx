@@ -6,8 +6,11 @@ import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux';
 import reducer from './helpers/reducers';
 import { Provider } from 'react-redux';
+import { loadLanguage } from './helpers/multilang';
+import translationFile from './translate.json'
 
 const store = createStore(reducer);
+loadLanguage(translationFile)
 
 ReactDOM.render(
   <React.StrictMode>

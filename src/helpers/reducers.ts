@@ -1,6 +1,6 @@
 import {
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_MODE, SET_SLOT
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SLOT
 } from "./actions";
 import { Action, ApplicationState, SlotData } from "./types";
 
@@ -29,6 +29,8 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             return {...state, availableSlots: action.data as SlotData[]}
         case SET_INTERVAL:
             return {...state, interval: action.data as number}
+        case SET_LANGUAGE:
+            return {...state, language: action.data as string}
     }
 
     return state
