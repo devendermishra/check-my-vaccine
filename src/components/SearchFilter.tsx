@@ -32,6 +32,7 @@ import {
 import { Theme } from '@material-ui/core'
 import { createStyles } from '@material-ui/core'
 import { getDistricts, getStates } from '../helpers/api'
+import { _T } from '../helpers/multilang'
 
 
 interface SearchProps {
@@ -49,7 +50,7 @@ export default SearchFilter
 
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
-        <p className="heading"><b>Search Filters</b></p>
+        <p className="heading"><b>{_T('FILTERS')}</b></p>
         <SimpleTabs {...props} />
     </div>)
 }
@@ -76,11 +77,11 @@ export function SimpleTabs(props: SearchProps) {
                 }
                 }
             >
-                <Tab eventKey="dist" title="Search By District">
+                <Tab eventKey="dist" title={_T('BY_DISTRICT')}>
                     <SearchByState {...props} />
                     <CommonSearch {...props} />
                 </Tab>
-                <Tab eventKey="pin" title="Search By Pincode">
+                <Tab eventKey="pin" title={_T('BY_PINCODE')}>
                     <SearchByPin {...props} />
                     <CommonSearch {...props} />
                 </Tab>
@@ -108,14 +109,14 @@ const SearchByState = (props: CommonSearchProps) => {
 
     return (
         <div style={{ display: 'flex', height: '64px' }}>
-            <Selector label='State'
+            <Selector label={_T('STATE')}
                 values={states}
                 callback={(value: number) => {
                     dispatch(selectState(value))
                     getDistrictFromLocalOrAPI(setDistricts, value)
                 }} />&nbsp;&nbsp;
             &nbsp;&nbsp;
-            <Selector label='District'
+            <Selector label={_T('DISTRICT')}
                 values={districts}
                 callback={(value: number) => { dispatch(selectDistrict(value)) }} />
         </div>
@@ -133,7 +134,7 @@ const SearchByPin = (props: CommonSearchProps) => {
                 &nbsp;&nbsp;<TextField id="standard-basic" label="Enter Pincode"
                     onChange={handleChange}
                     style={{ margin: 0, padding: 0 }}
-                    placeholder='Pincode' />
+                    placeholder={_T('PINCODE')} />
             </div>
         </div>)
 }
@@ -199,18 +200,18 @@ const CommonSearch = (props: CommonSearchProps) => {
     const [state, setState] = useState(false)
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
-    const buttonText = state ? "Stop Monitoring" : "Monitor Slot"
+    const buttonText = state ? _T('STOP'): _T('MONITOR')
 
     return (<>
         <br />
         <div style={{ alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Selector label="Vaccine Type"
+                <Selector label={_T('VACC_TYPE')}
                     callback={(vaccineId: number) => {
                         dispatch(selectVaccine(vaccineTypes[vaccineId]))
                     }}
                     values={availableVaccines} /><br />
-                <Selector label="Dose"
+                <Selector label={_T('DOSE')}
                     callback={(dose) => {
                         dispatch(selectDose(dose))
                     }}
@@ -219,13 +220,13 @@ const CommonSearch = (props: CommonSearchProps) => {
         </div>
         <br />
         <div style={{ alignItems: 'start', alignContent: 'start', textAlign: 'left' }}>
-            <Selector label="Age Group"
+            <Selector label={_T('AGE_GRP')}
                 callback={(ageId: number) => {
                     dispatch(selectAge(ageId))
                 }}
                 values={ageGroups} /><br />
 
-            <Selector label="Week"
+            <Selector label={_T("WEEK")}
                 callback={(week) => {
                     dispatch(selectWeek(week))
                 }}
@@ -235,7 +236,7 @@ const CommonSearch = (props: CommonSearchProps) => {
                 onClick={() => {
                     dispatch(setSlot([]))
                     props.checkSlotsCB()
-                }}>Check Slot</Button>
+                }}><b>{_T('CHECK_SLOT')}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                 onClick={() => {
                     const monitorState = state
@@ -248,15 +249,15 @@ const CommonSearch = (props: CommonSearchProps) => {
                     } else {
                         props.stopMonitorCB()
                     }
-                }}>{buttonText}</Button>
+                }}><b>{buttonText}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
                 onClick={() => {
                     window.location.reload()
-                }}>Reset</Button>
+                }}>{_T('RESET')}</Button>
             &nbsp;&nbsp;
             <OverlayTrigger trigger="click" placement="right" overlay={Disclaimer}>
             <Button variant="contained" color="default" startIcon={<WarningIcon />}>
-                Disclaimer</Button>
+                {_T('DISCL')}</Button>
             </OverlayTrigger>
             <br /><br />
         </div>
@@ -302,46 +303,20 @@ const getDistrictFromLocalOrAPI = (setDistrict: Dispatch<React.SetStateAction<Se
 
 const Disclaimer = (
     <Popover id="disclaimer">
-        <Popover.Title as="h3">Disclaimer</Popover.Title>
+        <Popover.Title as="h3">{_T('DISCL')}</Popover.Title>
         <Popover.Content>
-            Disclaimer:
+        {_T('DISCL')}:
             <ol>
-                <li>This is a third-party application. It does not facilitate any appointment
-                or booking of vaccine. Booking is to be done only by official medium
-                like Cowin portal, Aarogya Setu or Umang App.
-                </li>
-                <li>Please check your state or local guidelines for vaccination.</li>
-                <li>Please follow Covid-appropriate behaviour and keep yourself safe.</li>
-                <li>Please always consult qualified doctor for any symptoms.
-                    Do not self-medicate or follow other's prescription.
-                    Do not delay testing and doctor consultation on any doubt.
-                </li>
-                <li>
-                    There is no correctness guarantee of the data. This application
-                    fetches data from the open API of Cowin. Responses may be
-                    cached or delayed or withheld by these APIs.
-                </li>
-                <li>
-                    Considering above point, it does not guarantee any availability of the slot.
-                </li>
-                <li>
-                    We have no responsibility of any event arising due to the use of this website.
-                </li>
-                <li>
-                    This website or app does not store any personal data. It does
-                    not expect or store any cookie. It neither expect any personal
-                    data in network communication.
-                </li>
-                <li>
-                    Browser local storage is being used to provide smooth experience.
-                    Only state and district data is stored. There is no personal data
-                    stored. This can be viewed in local storage settings of the browser.
-                </li>
-                <li>
-                    This website is open source. User is free to use and distribute.
-                    Also, user can modify its code as per the requirement. But cannot claim
-                    copyright over that.
-                </li>
+                <li>{_T('DISC1')}</li>
+                <li>{_T('DISC2')}</li>
+                <li>{_T('DISC3')}</li>
+                <li>{_T('DISC4')}</li>
+                <li>{_T('DISC5')}</li>
+                <li>{_T('DISC6')}</li>
+                <li>{_T('DISC7')}</li>
+                <li>{_T('DISC8')}</li>
+                <li>{_T('DISC9')}</li>
+                <li>{_T('DISC10')}</li>
             </ol>
         </Popover.Content>
     </Popover>
