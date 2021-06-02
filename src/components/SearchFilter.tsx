@@ -33,6 +33,7 @@ import { createStyles } from '@material-ui/core'
 import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
 import { LanguageSelector } from './LanguageSelector'
+import { playSound } from '../helpers/alerts'
 
 
 interface SearchProps {
@@ -244,7 +245,9 @@ const CommonSearch = (props: CommonSearchProps) => {
                     dispatch(setSlot([]))
                     if (!monitorState) {
                         props.monitorSlotsCB(() => {
+                            playSound(() => alert(_T('DONE')))
                             setState(false)
+
                         })
                     } else {
                         props.stopMonitorCB()
