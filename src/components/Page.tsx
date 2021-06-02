@@ -2,7 +2,7 @@ import './Page.css'
 import { isMobile } from "react-device-detect"
 import SearchFilter from './SearchFilter'
 import Result from './Result'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
@@ -15,7 +15,12 @@ export const Page = () => {
     const [appState, setAppState] = useState({ appState: '' })
     const applicationState = useSelector(a => a) as ApplicationState
     const dispatch = useDispatch()
-    selectLanguage(applicationState.language ? applicationState.language: 'en')
+    useEffect(() => {
+        const langCode = localStorage.getItem('preferred_lang')
+        if (langCode) {
+            selectLanguage(langCode)
+        }
+    }, [])
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })

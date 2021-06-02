@@ -54,6 +54,7 @@ const LanguageModal = (props: LanguageSelectorProp) => {
     }
     const changeLanguage = (langCode: string) => () => {
         selectLanguage(langCode)
+        localStorage.setItem('preferred_lang', langCode)
         dispatch(setLanguage(langCode))
         handleClose()
     }
