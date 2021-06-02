@@ -2,7 +2,7 @@ import { useState } from "react"
 import LanguageIcon from '@material-ui/icons/Language'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
-import { selectLanguage, _T } from '../helpers/multilang'
+import { getSelectedLanguage, selectLanguage, _T } from '../helpers/multilang'
 import { CSSProperties } from "@material-ui/styles"
 import { useDispatch, useSelector } from "react-redux"
 import { setLanguage } from "../helpers/actions"
@@ -18,6 +18,7 @@ export const LanguageSelector = (props: LanguageSelectorProp) => {
     </>)
 }
 
+//Add new language here.
 const languageMap = [["हिंदी", "hi"], ["English", "en"]]
 
 const LanguageModal = (props: LanguageSelectorProp) => {
@@ -58,7 +59,7 @@ const LanguageModal = (props: LanguageSelectorProp) => {
         dispatch(setLanguage(langCode))
         handleClose()
     }
-    const currentLangage = applicationState.language ? applicationState.language : 'en'
+    const currentLangage = getSelectedLanguage()
     return (
         <>
             <Button variant="contained" color="default"

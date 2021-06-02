@@ -51,7 +51,7 @@ const Result = (props: ResultProps): ReactElement => {
                         {!isMobile && slotData.map(slot => (<tr>
                             <td>{slot.siteName}
                                 <br />{_T('AGE')}: <b>{slot.age}</b>
-                                <br />{_T('VACCINE')}: <b>{slot.vaccine}</b>
+                                <br />{_T('VACCINE')}: <b>{_T(slot.vaccine)}</b>
                                 <br />{_T('FEE')}:
                                 <b>{slot.vaccineFee ? slot.vaccineFee : _T('FREE')}</b>
                             </td>
@@ -69,7 +69,7 @@ const Result = (props: ResultProps): ReactElement => {
                             <td>{slot.siteName}
                                 <br /> {_T('DATE')}: <b>{slot.date}</b>
                                 <br />{_T('AGE')}: <b>{slot.age}</b>
-                                <br />{_T('VACCINE')}: <b>{slot.vaccine}</b>
+                                <br />{_T('VACCINE')}: <b>{_T(slot.vaccine)}</b>
                                 <br />{_T('FEE')}:
                                 <b>{slot.vaccineFee ? slot.vaccineFee : _T('FREE')}</b>
                             </td>

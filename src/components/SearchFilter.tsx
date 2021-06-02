@@ -15,6 +15,7 @@ import CancelIcon from '@material-ui/icons/Cancel'
 import ReplayIcon from '@material-ui/icons/Replay'
 import { Dispatch, useEffect, useState } from 'react'
 import Select from '@material-ui/core/Select'
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Modal from 'react-bootstrap/Modal'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -112,6 +113,7 @@ const SearchByState = (props: CommonSearchProps) => {
         <div style={{ display: 'flex', height: '64px' }}>
             <Selector label={_T('STATE')}
                 values={states}
+                required={true}
                 callback={(value: number) => {
                     dispatch(selectState(value))
                     getDistrictFromLocalOrAPI(setDistricts, value)
@@ -119,6 +121,7 @@ const SearchByState = (props: CommonSearchProps) => {
             &nbsp;&nbsp;
             <Selector label={_T('DISTRICT')}
                 values={districts}
+                required={true}
                 callback={(value: number) => { dispatch(selectDistrict(value)) }} />
         </div>
     )
@@ -132,19 +135,22 @@ const SearchByPin = (props: CommonSearchProps) => {
     return (
         <div>
             <div style={{ textAlign: 'left', display: 'flex', height: '64px' }}>
-                &nbsp;&nbsp;<TextField id="standard-basic" label="Enter Pincode"
+                &nbsp;&nbsp;<TextField id="standard-basic" label={_T('ENTER_PIN')}
                     onChange={handleChange}
+                    required
                     style={{ margin: 0, padding: 0 }}
                     placeholder={_T('PINCODE')} />
+                    <FormHelperText>{_T('REQD')}</FormHelperText>
             </div>
         </div>)
 }
 
 interface SelectorProps {
-    children?: React.ReactNode;
-    label: any;
-    values: Array<SelectElement>;
-    callback: (value: number) => void;
+    children?: React.ReactNode
+    label: any
+    values: Array<SelectElement>
+    callback: (value: number) => void
+    required?: boolean
 }
 
 const useSelectStyles = makeStyles((theme: Theme) =>
@@ -166,7 +172,8 @@ const Selector = (props: SelectorProps) => {
     const data = values || [];
     return (
         <div>
-            <FormControl className={classes.formControl}>
+            <FormControl required={props.required ? props.required: false}
+            className={classes.formControl}>
                 <InputLabel id={"demo-simple-select-" + label}>{label}</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
@@ -180,9 +187,10 @@ const Selector = (props: SelectorProps) => {
                     }}
                 >
                     {data.map(value => {
-                        return (<MenuItem value={value.id}>{value.name}</MenuItem>)
+                        return (<MenuItem value={value.id}>{_T(value.name)}</MenuItem>)
                     })}
                 </Select>
+                {props.required && <FormHelperText>{_T('REQD')}</FormHelperText>}
             </FormControl>
         </div>
     )
@@ -231,7 +239,7 @@ const CommonSearch = (props: CommonSearchProps) => {
                 callback={(week) => {
                     dispatch(selectWeek(week))
                 }}
-                values={weeks} />
+                values={weeks} /> &nbsp;&nbsp;{_T('WEEK_MEANS')}
             <br /> <br />
             &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                 onClick={() => {

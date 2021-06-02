@@ -163,12 +163,12 @@ function matchDose(session: VaccineSession, selectedDose: number | undefined) {
 
 
 function matchVaccine(session: VaccineSession, selectedVaccine: string | undefined) {
-    return !selectedVaccine
+    return !selectedVaccine || selectedVaccine === 'ALL'
         || (session.vaccine.toLowerCase() === selectedVaccine.toLowerCase())
 }
 
 
 function matchAge(session: VaccineSession, selectedAge: number | undefined) {
-    return !selectedAge
+    return !selectedAge || selectedAge === 0
         || (selectedAge === session.min_age_limit)
 }
