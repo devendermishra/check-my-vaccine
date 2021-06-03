@@ -25,10 +25,13 @@ const Result = (props: ResultProps): ReactElement => {
     const slotData = getSlots(applicationState)
     return (<div className={className}>
         {!appState && (<p style={{ color: 'blue' }}><b>{_T('CLICK_CHECK_SLOTS')}<br />
-        {_T('CLICK_MONITOR_SLOTS')}
+            {_T('CLICK_MONITOR_SLOTS')}
         </b></p>)}
         {(appState === WAITING_STATE && (<p style={{ color: 'blue' }}><b>
-            {_TK('WAITING', {interval: '' + applicationState.interval})}</b></p>))}
+            {_TK('WAITING', {
+                interval: '' + applicationState.interval + '-'
+                    + (applicationState.interval! + 10)
+            })}</b></p>))}
         {(appState === DONE_STATE
             && (!slotData || slotData.length <= 0)
             && (<p style={{ color: 'red' }}><b>{_T('NO_SLOTS')}</b></p>))}
@@ -61,8 +64,8 @@ const Result = (props: ResultProps): ReactElement => {
                             </td>
                             <td>{slot.date}</td>
                             <td>{slot.slotsAvailable}<br />
-                            {_T('DOSE1')}: {slot.firstDose}<br />
-                            {_T('DOSE2')}: {slot.secondDose}
+                                {_T('DOSE1')}: {slot.firstDose}<br />
+                                {_T('DOSE2')}: {slot.secondDose}
                             </td>
                         </tr>))}
                         {isMobile && slotData.map(slot => (<tr>

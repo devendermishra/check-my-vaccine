@@ -1,3 +1,4 @@
+import { delay } from "./alerts"
 import { getByDistrict, getSlotsByPIN } from "./api"
 import { DISTRICT_MODE, PINCODE_MODE } from "./constants"
 import { CenterResponse, VaccineSession } from "./externalTypes"
@@ -45,14 +46,18 @@ const monitorPincode = (applicationState: ApplicationState, callback: (slots: Sl
     const pinCode = applicationState.selectedPin!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
-    getSlotsByPIN(pinCode, startDate).then(centerFilterPromise(applicationState, callback))
+    const delayInterval = Math.floor((Math.random() * 10))*1000
+    delay(delayInterval, () => getSlotsByPIN(pinCode, startDate)
+        .then(centerFilterPromise(applicationState, callback)))
 }
 
 const monitorDistrict = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
     const districtId = applicationState.selectedDistrict!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
-    getByDistrict(districtId, startDate).then(centerFilterPromise(applicationState, callback))
+    const delayInterval = Math.floor((Math.random() * 10))*1000
+    delay(delayInterval, () => getByDistrict(districtId, startDate)
+        .then(centerFilterPromise(applicationState, callback)))
 }
 
 const checkPincode = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {

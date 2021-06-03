@@ -10,6 +10,7 @@ export const playSound = (callback: () => void) => {
     delay(7000, callback)
 }
 
-const delay = (ms: number, callback: () => void) => {
-    return new Promise(resolve => setTimeout(resolve, ms) ).then(() => callback())
+export const delay = async (ms: number, callback: () => void) => {
+    await new Promise(resolve => setTimeout(resolve, ms))
+    return callback()
 }
