@@ -8,13 +8,13 @@ let timer: any = null
 export const monitorSlots = (applicationState: ApplicationState,
     callback: (slots: SlotData[]) => void,
     startCallback: () => void) => {
-        const interval = applicationState.interval!
+    const interval = applicationState.interval!
     if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
         startCallback()
-        timer = setInterval(() => monitorPincode(applicationState, callback), interval*1000)
-    } else if(applicationState.mode === DISTRICT_MODE && validateDistrictInput(applicationState)) {
+        timer = setInterval(() => monitorPincode(applicationState, callback), interval * 1000)
+    } else if (applicationState.mode === DISTRICT_MODE && validateDistrictInput(applicationState)) {
         startCallback()
-        timer = setInterval(() => monitorDistrict(applicationState, callback), interval*1000)
+        timer = setInterval(() => monitorDistrict(applicationState, callback), interval * 1000)
     }
 }
 
@@ -27,8 +27,8 @@ export const checkSlots = (applicationState: ApplicationState,
     callback: (slots: SlotData[]) => void) => {
     if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
         checkPincode(applicationState, callback)
-    } else if((!applicationState.mode || applicationState.mode === DISTRICT_MODE) 
-    && validateDistrictInput(applicationState)) {
+    } else if ((!applicationState.mode || applicationState.mode === DISTRICT_MODE)
+        && validateDistrictInput(applicationState)) {
         checkDistrict(applicationState, callback)
     }
 }
@@ -106,7 +106,7 @@ const findMatch = (centers: CenterResponse, applicationState: ApplicationState):
             }
         })
     });
-    return slotData.sort((a,b) => compareDate(a.date, b.date))
+    return slotData.sort((a, b) => compareDate(a.date, b.date))
 }
 
 const compareDate = (date1: string, date2: string): number => {
@@ -132,13 +132,14 @@ const getAge = (age: number) => {
 
 const getDate = (week: number) => {
     const currentDate = new Date()
-    const targetDate = week >= 1 ? new Date(currentDate.getTime() + (week - 1) * 7 * 24 * 60 * 60) : currentDate
+    const targetDate = week > 1 ? new Date(currentDate.getTime() +
+        (week - 1) * 7 * 24 * 60 * 60 * 1000) : currentDate
     return '' + targetDate.getDate() + '-' + (targetDate.getMonth() + 1) + '-' + targetDate.getFullYear()
 }
 
 const centerFilterCheckPromise = (applicationState: ApplicationState,
-    callback: (slots: SlotData[]) => void): ((value: CenterResponse) => 
-    void | PromiseLike<void>) | null | undefined => {
+    callback: (slots: SlotData[]) => void): ((value: CenterResponse) =>
+        void | PromiseLike<void>) | null | undefined => {
     return (centers: CenterResponse) => {
         const matchedSlots = findMatch(centers, applicationState)
         callback(matchedSlots)
