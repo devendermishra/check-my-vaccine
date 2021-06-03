@@ -4,9 +4,8 @@ import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
 import { getSelectedLanguage, selectLanguage, _T } from '../helpers/multilang'
 import { CSSProperties } from "@material-ui/styles"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { setLanguage } from "../helpers/actions"
-import { ApplicationState } from "../helpers/types"
 
 interface LanguageSelectorProp {
 }
@@ -23,7 +22,6 @@ const languageMap = [["हिंदी", "hi"], ["English", "en"]]
 
 const LanguageModal = (props: LanguageSelectorProp) => {
     const [show, setShow] = useState(false)
-    const applicationState: ApplicationState = useSelector(a => a)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
     const dispatch = useDispatch()
