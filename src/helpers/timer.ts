@@ -1,10 +1,49 @@
+import { TypeOfTag } from "typescript"
 import { delay } from "./alerts"
 import { getByDistrict, getSlotsByPIN } from "./api"
 import { DISTRICT_MODE, PINCODE_MODE } from "./constants"
 import { CenterResponse, VaccineSession } from "./externalTypes"
 import { ApplicationState, SlotData } from "./types"
 
-let timer: any = null
+//Variable timer interface to change time.
+interface VariableTimer {
+    running: boolean
+    iv: number
+    timeout?: NodeJS.Timeout
+    cb: () => void
+    start: (callback: () => void, iv: number) => void
+    execute: (varTimer: VariableTimer) => void
+    stop: () => void
+    setInterval: (iv: number) => void
+}
+
+var varTimer: VariableTimer = {
+    running: false,
+    iv: 5000,
+    timeout: undefined,
+    cb: () => { },
+    start: function (cb: () => void, iv: number) {
+        var elm = this;
+        this.running = true;
+        this.cb = cb;
+        this.iv = iv;
+        this.timeout = setTimeout(function () { elm.execute(elm) }, this.iv);
+    },
+    execute: function (e) {
+        if (e.running) {
+            //To run in the loop, it assumes that start/setInterval is being called
+            //inside the callback. Else, it will behave same setTimeout.
+            e.cb();
+        }
+    },
+
+    stop: function () {
+        this.running = false;
+    },
+    setInterval: function (iv) {
+        this.start(this.cb, iv);
+    }
+};
 
 export const monitorSlots = (applicationState: ApplicationState,
     callback: (slots: SlotData[]) => void,
@@ -12,15 +51,15 @@ export const monitorSlots = (applicationState: ApplicationState,
     const interval = applicationState.interval!
     if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
         startCallback()
-        timer = setInterval(() => monitorPincode(applicationState, callback), interval * 1000)
+        varTimer.start(() => monitorPincode(applicationState, callback), interval * 1000)
     } else if (applicationState.mode === DISTRICT_MODE && validateDistrictInput(applicationState)) {
         startCallback()
-        timer = setInterval(() => monitorDistrict(applicationState, callback), interval * 1000)
+        varTimer.start(() => monitorDistrict(applicationState, callback), interval * 1000)
     }
 }
 
 export const stopMonitoring = (callback: () => void) => {
-    clearInterval(timer)
+    varTimer.stop()
     callback()
 }
 
@@ -42,22 +81,23 @@ const validateDistrictInput = (appliactionState: ApplicationState): boolean => {
     return appliactionState.selectedDistrict !== undefined
 }
 
-const monitorPincode = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const monitorPincode = async (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
     const pinCode = applicationState.selectedPin!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
-    const delayInterval = Math.floor((Math.random() * 10))*1000
-    delay(delayInterval, () => getSlotsByPIN(pinCode, startDate)
-        .then(centerFilterPromise(applicationState, callback)))
+    const delayInterval = Math.floor((Math.random() * 10)) * 1000 + applicationState.interval! * 1000
+    getSlotsByPIN(pinCode, startDate).then(centerFilterPromise(applicationState, callback))
+    varTimer.setInterval(delayInterval)
 }
 
-const monitorDistrict = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const monitorDistrict = async (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
     const districtId = applicationState.selectedDistrict!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
-    const delayInterval = Math.floor((Math.random() * 10))*1000
-    delay(delayInterval, () => getByDistrict(districtId, startDate)
-        .then(centerFilterPromise(applicationState, callback)))
+    const delayInterval = Math.floor((Math.random() * 10)) * 1000 + applicationState.interval! * 1000
+    getByDistrict(districtId, startDate)
+        .then(centerFilterPromise(applicationState, callback))
+    varTimer.setInterval(delayInterval)
 }
 
 const checkPincode = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
@@ -156,7 +196,7 @@ function centerFilterPromise(applicationState: ApplicationState, callback: (slot
         const matchedSlots = findMatch(centers, applicationState)
         if (matchedSlots.length > 0) {
             callback(matchedSlots)
-            clearInterval(timer)
+            varTimer.stop()
         }
     }
 }
