@@ -1,5 +1,3 @@
-import { TypeOfTag } from "typescript"
-import { delay } from "./alerts"
 import { getByDistrict, getSlotsByPIN } from "./api"
 import { DISTRICT_MODE, PINCODE_MODE } from "./constants"
 import { CenterResponse, VaccineSession } from "./externalTypes"

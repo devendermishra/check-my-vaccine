@@ -24,7 +24,7 @@ export const Page = () => {
         if (interval) {
             dispatch(setPingInterval(Number.parseInt(interval)))
         }
-    }, [])
+    }, [dispatch])
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })

@@ -1,17 +1,14 @@
 import SettingsIcon from '@material-ui/icons/Settings';
 import { ChangeEvent, useState } from "react"
-import LanguageIcon from '@material-ui/icons/Language'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
-import { getSelectedLanguage, selectLanguage, _T } from '../helpers/multilang'
-import { CSSProperties } from "@material-ui/styles"
+import { _T } from '../helpers/multilang'
 import { useDispatch, useSelector } from "react-redux"
-import { setLanguage, setPingInterval } from "../helpers/actions"
+import {  setPingInterval } from "../helpers/actions"
 import { ApplicationState } from '../helpers/types'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Slider from '@material-ui/core/Slider'
-import { type } from 'os';
 
 
 export const Settings = () => {
