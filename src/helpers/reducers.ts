@@ -5,7 +5,7 @@ import {
 import { Action, ApplicationState, SlotData } from "./types";
 
 
-const intialState: ApplicationState = {interval: 5}
+const intialState: ApplicationState = {interval: 5, threshold: 1}
 
 const reducer = (state = intialState, action: Action): ApplicationState => {
     switch (action.type) {

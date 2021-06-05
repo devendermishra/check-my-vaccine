@@ -12,6 +12,7 @@ export const SET_STATUS = 'SET_STATUS'
 export const SET_SLOT = 'SET_SLOT'
 export const SET_INTERVAL = 'SET_INTERVAL'
 export const SET_LANGUAGE = 'SET_LANGUAGE'
+export const SET_THRESHOLD = 'SET_THRESHOLD'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -25,3 +26,4 @@ export const setStatus = (status: string): Action => ({type: SET_STATUS, data: s
 export const setSlot = (slots: SlotData[]): Action => ({type: SET_SLOT, data: slots})
 export const setPingInterval = (interval: number): Action => ({type: SET_INTERVAL, data: interval})
 export const setLanguage = (langCode: string): Action => ({type: SET_LANGUAGE, data: langCode})
+export const setThreshold = (threshold: number): Action => ({type: SET_THRESHOLD, data: threshold})
