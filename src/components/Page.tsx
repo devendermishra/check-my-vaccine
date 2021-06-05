@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
-import { setPingInterval, setSlot } from '../helpers/actions'
+import { setConfigs, setPingInterval, setSlot, setThreshold } from '../helpers/actions'
 import { selectLanguage } from '../helpers/multilang'
 import { ApplicationState } from '../helpers/types'
 
@@ -20,10 +20,23 @@ export const Page = () => {
         if (langCode) {
             selectLanguage(langCode)
         }
-        const interval = localStorage.getItem('preferred_interval')
+        let interval = localStorage.getItem('preferred_interval')
+        let intervalValue = 5
         if (interval) {
-            dispatch(setPingInterval(Number.parseInt(interval)))
+            intervalValue = parseInt(interval)
         }
+        let threshold = localStorage.getItem('preferred_threshold')
+        let thresholdValue = 1
+        if (threshold) {
+            thresholdValue = parseInt(threshold)
+        }
+        if (isNaN(intervalValue)) {
+            intervalValue = 5
+        }
+        if (isNaN(thresholdValue)) {
+            thresholdValue = 1
+        }
+        dispatch(setConfigs(thresholdValue, intervalValue))
     }, [dispatch])
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {

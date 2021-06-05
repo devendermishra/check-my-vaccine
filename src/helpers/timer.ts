@@ -115,12 +115,15 @@ const checkDistrict = (applicationState: ApplicationState, callback: (slots: Slo
 
 const findMatch = (centers: CenterResponse, applicationState: ApplicationState): Array<SlotData> => {
     const slotData: Array<SlotData> = []
+    const threshold = applicationState.threshold ? applicationState.threshold : 1
     centers.centers.forEach(vaccineCenter => {
         vaccineCenter.sessions.forEach(session => {
-            if (session.available_capacity > 0) {
-                let isMatch = matchDose(session, applicationState.selectedDose)
+            if (session.available_capacity >= threshold) {
+                let isMatch = matchThreshold(session, threshold, applicationState.selectedDose)
+                    && matchDose(session, applicationState.selectedDose)
                     && matchVaccine(session, applicationState.selectedVaccine)
                     && matchAge(session, applicationState.selectedAge)
+
                 if (isMatch) {
                     const vaccineFees = vaccineCenter.vaccine_fees ? vaccineCenter
                         .vaccine_fees
@@ -205,6 +208,18 @@ function matchDose(session: VaccineSession, selectedDose: number | undefined) {
             : (session.available_capacity_dose2 > 0))
 }
 
+const matchThreshold = (session: VaccineSession, threshold: number,
+    selectedDose: number | undefined) => {
+    if (selectedDose) {
+        if (selectedDose === 1) {
+            return session.available_capacity_dose1 >= threshold
+        } else {
+            return session.available_capacity_dose2 >= threshold
+        }
+    }
+
+    return session.available_capacity >= threshold
+}
 
 function matchVaccine(session: VaccineSession, selectedVaccine: string | undefined) {
     return !selectedVaccine || selectedVaccine === 'ALL'

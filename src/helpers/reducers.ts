@@ -1,6 +1,6 @@
 import {
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SLOT
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
 } from "./actions";
 import { Action, ApplicationState, SlotData } from "./types";
 
@@ -31,6 +31,11 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             return {...state, interval: action.data as number}
         case SET_LANGUAGE:
             return {...state, language: action.data as string}
+        case SET_THRESHOLD:
+            return {...state, threshold: action.data as number}
+        case SET_STORAGE_CONFIGS:
+            let splits = (action.data as string).split('_')
+            return {...state, threshold: +splits[0], interval: +splits[1]}
     }
 
     return state

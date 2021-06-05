@@ -75,7 +75,7 @@ const setDefaultSettings = (dispatch: Dispatch<any>) => {
 
 const ThresholdInput = () => {
     const applicationState: ApplicationState = useSelector(a => a)
-    const [threshold, setThresholdValue] = useState(applicationState.threshold ? '1' :
+    const [threshold, setThresholdValue] = useState(!applicationState.threshold ? '1' :
         '' + applicationState.threshold)
     const dispatch = useDispatch()
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
