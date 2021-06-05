@@ -25,7 +25,7 @@ export const Page = () => {
         if (interval) {
             intervalValue = parseInt(interval)
         }
-        let threshold = localStorage.getItem('preferred_threshold')
+        let threshold = localStorage.getItem('min_threshold')
         let thresholdValue = 1
         if (threshold) {
             thresholdValue = parseInt(threshold)

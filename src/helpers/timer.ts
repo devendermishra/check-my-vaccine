@@ -135,8 +135,7 @@ const findMatch = (centers: CenterResponse, applicationState: ApplicationState):
                     }
                     slotData.push({
                         siteName: vaccineCenter.name,
-                        siteAddress: vaccineCenter.address + '\n' + vaccineCenter.district_name
-                            + '\n' + vaccineCenter.state_name + ' - ' + vaccineCenter.pincode,
+                        siteAddress: vaccineCenter.address,
                         date: session.date,
                         slotsAvailable: session.available_capacity,
                         vaccine: session.vaccine,
