@@ -23,5 +23,5 @@ export const selectAge = (age: number): Action => ({ type: SELECT_AGE, data: age
 export const setMode = (mode: string): Action => ({type: SET_MODE, data: mode})
 export const setStatus = (status: string): Action => ({type: SET_STATUS, data: status})
 export const setSlot = (slots: SlotData[]): Action => ({type: SET_SLOT, data: slots})
-export const setInterval = (interval: number): Action => ({type: SET_INTERVAL, data: interval})
+export const setPingInterval = (interval: number): Action => ({type: SET_INTERVAL, data: interval})
 export const setLanguage = (langCode: string): Action => ({type: SET_LANGUAGE, data: langCode})

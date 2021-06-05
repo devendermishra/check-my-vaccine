@@ -35,6 +35,7 @@ import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
 import { LanguageSelector } from './LanguageSelector'
 import { playSound } from '../helpers/alerts'
+import { Settings } from './Settings'
 
 
 interface SearchProps {
@@ -52,7 +53,9 @@ export default SearchFilter
 
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
-        <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;<LanguageSelector/></p>
+        <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;<LanguageSelector/>
+        <Settings/>
+        </p>
         <SimpleTabs {...props} />
     </div>)
 }
@@ -187,7 +190,9 @@ const Selector = (props: SelectorProps) => {
                     }}
                 >
                     {data.map(value => {
-                        return (<MenuItem value={value.id}>{_T(value.name)}</MenuItem>)
+                        return (<MenuItem value={value.id} id={label + "-item-" + value.id}
+                        key={label + "-key-" + value.id}
+                        >{_T(value.name)}</MenuItem>)
                     })}
                 </Select>
                 {props.required && <FormHelperText>{_T('REQD')}</FormHelperText>}

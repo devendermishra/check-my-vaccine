@@ -71,6 +71,7 @@ const LanguageModal = (props: LanguageSelectorProp) => {
                     <div>
                         {languageMap.map((langElem) => {
                             return (<div
+                                key={"lang-modal-" + langElem[1]}
                                 style={langElem[1] === currentLangage ? selectedLanguageStyle : buttonStyle}
                                 onClick={changeLanguage(langElem[1])}>
                                 {langElem[0]}

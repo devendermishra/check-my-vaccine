@@ -38,7 +38,7 @@ const Result = (props: ResultProps): ReactElement => {
         {(slotData && slotData.length !== 0 &&
             (<>
                 <Table striped hover size="sm">
-                    <thead>
+                    <thead key={'result-thead'}>
                         {!isMobile && <tr>
                             <th>{_T('SITE')}</th>
                             <th>{_T('ADDR')}</th>
@@ -50,33 +50,33 @@ const Result = (props: ResultProps): ReactElement => {
                             <th>{_T('ADDR')}</th>
                         </tr>}
                     </thead>
-                    <tbody>
-                        {!isMobile && slotData.map(slot => (<tr>
-                            <td>{slot.siteName}
+                    <tbody key={'result-tbody-data'}>
+                        {!isMobile && slotData.map(slot => (<tr key={'result-' + slot.siteName + '-' + slot.date}>
+                            <td key={'resultSite-' + slot.siteName + '-' + slot.date}>{slot.siteName}
                                 <br />{_T('AGE')}: <b>{slot.age}</b>
                                 <br />{_T('VACCINE')}: <b>{_T(slot.vaccine)}</b>
                                 <br />{_T('FEE')}:
                                 <b>{slot.vaccineFee ? slot.vaccineFee : _T('FREE')}</b>
                             </td>
-                            <td>{slot.siteAddress.split('\n').map(text => (<>{text}<br /></>))}
+                            <td key={'resultAddr-' + slot.siteName + '-' + slot.date}>{slot.siteAddress.split('\n').map(text => (<>{text}<br /></>))}
                                 {(slot.lat && slot.long) && <a href=
                                     {'https://maps.google.com/?q=' + slot.lat + ',' + slot.long}>{_T('LOCATION')}</a>}
                             </td>
-                            <td>{slot.date}</td>
-                            <td>{slot.slotsAvailable}<br />
+                            <td key={'resultDate-' + slot.siteName + '-' + slot.date}>{slot.date}</td>
+                            <td key={'resultDose-' + slot.siteName + '-' + slot.date}>{slot.slotsAvailable}<br />
                                 {_T('DOSE1')}: {slot.firstDose}<br />
                                 {_T('DOSE2')}: {slot.secondDose}
                             </td>
                         </tr>))}
-                        {isMobile && slotData.map(slot => (<tr>
-                            <td>{slot.siteName}
+                        {isMobile && slotData.map(slot => (<tr key={'Mresult-' + slot.siteName + '-' + slot.date}>
+                            <td key={'MresultSite-' + slot.siteName + '-' + slot.date}>{slot.siteName}
                                 <br /> {_T('DATE')}: <b>{slot.date}</b>
                                 <br />{_T('AGE')}: <b>{slot.age}</b>
                                 <br />{_T('VACCINE')}: <b>{_T(slot.vaccine)}</b>
                                 <br />{_T('FEE')}:
                                 <b>{slot.vaccineFee ? slot.vaccineFee : _T('FREE')}</b>
                             </td>
-                            <td>{slot.siteAddress.split('\n').map(text => (<>{text}<br /></>))}
+                            <td key={'MresultAddr-' + slot.siteName + '-' + slot.date}>{slot.siteAddress.split('\n').map(text => (<>{text}<br /></>))}
                                 {(slot.lat && slot.long) && <a href=
                                     {'https://maps.google.com/?q=' + slot.lat + ',' + slot.long}>{_T('LOCATION')}</a>}
                                 <br />{_T('SLOTS')}: <b>{slot.slotsAvailable}</b>
