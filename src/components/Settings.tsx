@@ -23,9 +23,6 @@ const SettingsModal = () => {
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
-    const applicationState: ApplicationState = useSelector(a => a)
-    const dispatch = useDispatch()
-    
     
     return (
         <>
@@ -102,6 +99,7 @@ const IntervalSlider = () => {
       if (intervalValue) {
         if (intervalValue >= 5 && intervalValue <= 30) {
             dispatch(setPingInterval(intervalValue))
+            localStorage.setItem('preferred_interval', '' + intervalValue)
         }
       }
   }
