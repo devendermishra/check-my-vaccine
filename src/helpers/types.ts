@@ -60,5 +60,5 @@ export interface ApplicationState {
 
 export interface Action {
     type: string,
-    data: number | string | SlotData | SlotData[]
+    data: number | string | SlotData | SlotData[] | FavoriteSite
 }

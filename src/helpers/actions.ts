@@ -16,6 +16,7 @@ export const SET_THRESHOLD = 'SET_THRESHOLD'
 export const SET_STORAGE_CONFIGS = 'SET_STORAGE_CONFIGS'
 export const ADD_FAVORITE_SLOT = 'ADD_FAVORITE_SLOT'
 export const DEL_FAVORITE_SLOT = 'DEL_FAVORITE_SLOT'
+export const DEL_EXISTING_FAVORITE_SLOT = 'DEL_EXISTING_FAVORITE_SLOT'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -36,3 +37,4 @@ export const setConfigs = (threshold: number, interval: number, favSites: Favori
 })
 export const setFavSlot = (slot: SlotData): Action => ({ type: ADD_FAVORITE_SLOT, data: slot })
 export const delFavSlot = (slot: SlotData): Action => ({ type: DEL_FAVORITE_SLOT, data: slot })
+export const remFavSlot = (slot: FavoriteSite): Action => ({type: DEL_EXISTING_FAVORITE_SLOT, data: slot})

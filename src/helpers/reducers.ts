@@ -1,5 +1,6 @@
 import {
     ADD_FAVORITE_SLOT,
+    DEL_EXISTING_FAVORITE_SLOT,
     DEL_FAVORITE_SLOT,
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
     SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
@@ -69,6 +70,20 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             let favoriteSiteSet = state.favoriteSiteSet
             if (favoriteSiteSet) {
                 favoriteSiteSet.delete(slot.centerId)
+            }
+            localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
+            return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
+        }
+        
+        case DEL_EXISTING_FAVORITE_SLOT: {
+            const site = action.data as FavoriteSite
+            let favoriteSites = state.favoriteSite
+            if (favoriteSites) {
+                favoriteSites = favoriteSites.filter(x => x.centerId !== site.centerId)
+            }
+            let favoriteSiteSet = state.favoriteSiteSet
+            if (favoriteSiteSet) {
+                favoriteSiteSet.delete(site.centerId)
             }
             localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
             return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }

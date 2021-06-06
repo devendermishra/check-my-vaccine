@@ -10,13 +10,11 @@ import TextField from '@material-ui/core/TextField'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import FormControl from '@material-ui/core/FormControl'
 import VisibilityIcon from '@material-ui/icons/Visibility'
-import WarningIcon from '@material-ui/icons/Warning'
 import CancelIcon from '@material-ui/icons/Cancel'
 import ReplayIcon from '@material-ui/icons/Replay'
 import { Dispatch, useEffect, useState } from 'react'
 import Select from '@material-ui/core/Select'
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Modal from 'react-bootstrap/Modal'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
@@ -33,10 +31,8 @@ import { Theme } from '@material-ui/core'
 import { createStyles } from '@material-ui/core'
 import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
-import { LanguageSelector } from './LanguageSelector'
 import { playSound } from '../helpers/alerts'
-import { Settings } from './Settings'
-
+import PreferenceMenu from './PreferenceMenu'
 
 interface SearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
@@ -53,8 +49,7 @@ export default SearchFilter
 
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
-        <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;<LanguageSelector/>
-        <Settings/>
+        <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;
         </p>
         <SimpleTabs {...props} />
     </div>)
@@ -70,6 +65,7 @@ export function SimpleTabs(props: SearchProps) {
 
     return (
         <div className={classes.root}>
+            <PreferenceMenu/><br/>
             <Tabs
                 variant="pills"
                 id="controlled-tab-example"
@@ -270,8 +266,6 @@ const CommonSearch = (props: CommonSearchProps) => {
                 onClick={() => {
                     window.location.reload()
                 }}>{_T('RESET')}</Button>
-            &nbsp;&nbsp;
-            <DisclaimerModal />&nbsp;&nbsp;
             <br /><br />
         </div>
     </>)
@@ -312,35 +306,4 @@ const getDistrictFromLocalOrAPI = (setDistrict: Dispatch<React.SetStateAction<Se
             setDistrict(stateList)
         })
     }
-}
-
-const DisclaimerModal = () => {
-    const [show, setShow] = useState(false)
-    const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
-    return (
-        <>
-            <Button variant="contained" color="default"
-                onClick={handleShow}
-                startIcon={<WarningIcon />}>
-                {_T('DISCL')}</Button>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeLabel="" closeButton>
-                    <Modal.Title>{_T('DISCL')}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body><ol>
-                    <li>{_T('DISC1')}</li>
-                    <li>{_T('DISC2')}</li>
-                    <li>{_T('DISC3')}</li>
-                    <li>{_T('DISC4')}</li>
-                    <li>{_T('DISC5')}</li>
-                    <li>{_T('DISC6')}</li>
-                    <li>{_T('DISC7')}</li>
-                    <li>{_T('DISC8')}</li>
-                    <li>{_T('DISC9')}</li>
-                    <li>{_T('DISC10')}</li>
-                </ol></Modal.Body>
-            </Modal>
-        </>
-    )
 }

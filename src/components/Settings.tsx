@@ -1,5 +1,5 @@
 import SettingsIcon from '@material-ui/icons/Settings';
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, SetStateAction, useState } from "react"
 import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
 import { _T } from '../helpers/multilang'
@@ -10,13 +10,14 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Slider from '@material-ui/core/Slider'
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { Dispatch } from 'redux';
-import { isMobile } from 'react-device-detect';
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import { Dispatch } from 'redux'
+import { isMobile } from 'react-device-detect'
+import MenuItem from '@material-ui/core/MenuItem'
 
 
 export const Settings = () => {
@@ -24,46 +25,78 @@ export const Settings = () => {
     return (<><SettingsModal /></>)
 }
 
+interface SettingsMenuProps {
+    menuCallback : () => void
+}
+
+export const SettingsMenu = (props: SettingsMenuProps) => {
+    const [show, setShow] = useState(false)
+    const handleShow = () => {
+        if (props.menuCallback) {
+            props.menuCallback()
+        }
+        setShow(true)
+    }
+
+    return (
+        <>
+            <MenuItem onClick={handleShow}><SettingsIcon color='primary'/>&nbsp;&nbsp;{_T('SETTINGS')}</MenuItem>
+            <SettingsModalBody show={show} setShow={setShow} />
+        </>
+    )
+}
+
 const SettingsModal = () => {
     const [show, setShow] = useState(false)
-    const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
-    const dispatch = useDispatch()
 
     return (
         <>
             <Button variant="contained" color="default"
                 onClick={handleShow}
                 startIcon={<SettingsIcon />} >{_T('SETTINGS')}</Button>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeLabel="" closeButton>
-                    <Modal.Title>{_T('SETTINGS')}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <ThresholdInput />
-                    <IntervalSlider />
-                    <Modal.Footer>
-                        <LocalStorageClearDialog />
-                        {!isMobile && (<>&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;</>) }
-                        <Button variant="contained" color="default"
-                            onClick={() => {
-                                setDefaultSettings(dispatch)
-                                handleClose()
-                            }
-                            }>
-                            {_T('DEFAULT')}
-                        </Button>
-                        {!isMobile && (<>&nbsp;&nbsp;&nbsp;&nbsp;</>)}
-                    <Button variant="contained" color="secondary"
-                            onClick={handleClose}>
-                            {_T('CLOSE')}
-                        </Button>
-                    </Modal.Footer>
-                </Modal.Body>
-            </Modal>
+            <SettingsModalBody show={show} setShow={setShow} />
         </>
     )
+}
+
+interface SettingsModalBodyProps {
+    show: boolean
+    setShow: React.Dispatch<SetStateAction<boolean>>
+}
+
+const SettingsModalBody = (props: SettingsModalBodyProps) => {
+    //const [show, setShow] = useState(false)
+    const handleClose = () => props.setShow(false)
+    const dispatch = useDispatch()
+
+    return (<Modal show={props.show} onHide={handleClose}>
+        <Modal.Header closeLabel="" closeButton>
+            <Modal.Title>{_T('SETTINGS')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <ThresholdInput />
+            <IntervalSlider />
+            <Modal.Footer>
+                <LocalStorageClearDialog />
+                {!isMobile && (<>&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;</>) }
+                <Button variant="contained" color="default"
+                    onClick={() => {
+                        setDefaultSettings(dispatch)
+                        handleClose()
+                    }
+                    }>
+                    {_T('DEFAULT')}
+                </Button>
+                {!isMobile && (<>&nbsp;&nbsp;&nbsp;&nbsp;</>)}
+            <Button variant="contained" color="secondary"
+                    onClick={handleClose}>
+                    {_T('CLOSE')}
+                </Button>
+            </Modal.Footer>
+        </Modal.Body>
+    </Modal>)
 }
 
 const setDefaultSettings = (dispatch: Dispatch<any>) => {
