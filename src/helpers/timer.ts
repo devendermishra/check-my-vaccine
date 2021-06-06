@@ -145,7 +145,9 @@ const findMatch = (centers: CenterResponse, applicationState: ApplicationState):
                         feeType: vaccineCenter.fee_type,
                         vaccineFee: vaccineCost,
                         lat: vaccineCenter.lat,
-                        long: vaccineCenter.long
+                        sessionId: session.session_id,
+                        long: vaccineCenter.long,
+                        centerId: vaccineCenter.center_id
                     })
                 }
             }

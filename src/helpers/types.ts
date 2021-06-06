@@ -10,8 +10,16 @@ export type SlotData = {
     age: string
     feeType: string
     vaccineFee?: string
+    centerId: number
+    sessionId: string
     lat?: number
     long?: number
+}
+
+export type FavoriteSite = {
+    centerId: number
+    siteName: string
+    siteAddress: string
 }
 
 export type AppState = {
@@ -46,9 +54,11 @@ export interface ApplicationState {
     interval?: number
     language?: string
     threshold?: number
+    favoriteSite?: FavoriteSite[]
+    favoriteSiteSet?: Set<number>
 }
 
 export interface Action {
     type: string,
-    data: number|string|SlotData[]
+    data: number | string | SlotData | SlotData[]
 }

@@ -1,4 +1,4 @@
-import { Action, SlotData } from "./types"
+import { Action, FavoriteSite, SlotData } from "./types"
 
 export const SELECT_STATE = 'SELECT_STATE'
 export const SELECT_DISTRICT = 'SELECT_DISTRICT'
@@ -14,6 +14,8 @@ export const SET_INTERVAL = 'SET_INTERVAL'
 export const SET_LANGUAGE = 'SET_LANGUAGE'
 export const SET_THRESHOLD = 'SET_THRESHOLD'
 export const SET_STORAGE_CONFIGS = 'SET_STORAGE_CONFIGS'
+export const ADD_FAVORITE_SLOT = 'ADD_FAVORITE_SLOT'
+export const DEL_FAVORITE_SLOT = 'DEL_FAVORITE_SLOT'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -28,7 +30,9 @@ export const setSlot = (slots: SlotData[]): Action => ({ type: SET_SLOT, data: s
 export const setPingInterval = (interval: number): Action => ({ type: SET_INTERVAL, data: interval })
 export const setLanguage = (langCode: string): Action => ({ type: SET_LANGUAGE, data: langCode })
 export const setThreshold = (threshold: number): Action => ({ type: SET_THRESHOLD, data: threshold })
-export const setConfigs = (threshold: number, interval: number): Action => ({
+export const setConfigs = (threshold: number, interval: number, favSites: FavoriteSite[]): Action => ({
     type: SET_STORAGE_CONFIGS,
-    data: '' + threshold + '_' + interval
+    data: '' + threshold + '_' + interval + '_' + JSON.stringify(favSites)
 })
+export const setFavSlot = (slot: SlotData): Action => ({ type: ADD_FAVORITE_SLOT, data: slot })
+export const delFavSlot = (slot: SlotData): Action => ({ type: DEL_FAVORITE_SLOT, data: slot })
