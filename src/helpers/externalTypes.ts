@@ -53,3 +53,7 @@ export interface Center {
 export interface CenterResponse {
     centers: Array<Center>
 }
+
+export interface SingleCenterResponse {
+    centers: Center
+}

@@ -25,7 +25,7 @@ import { useDispatch } from 'react-redux'
 import {
     selectAge, selectDistrict, selectDose,
     selectPincode, selectState, selectVaccine,
-    selectWeek, setMode, setSlot
+    selectWeek, setMode, setSearchResult
 } from '../helpers/actions'
 import { Theme } from '@material-ui/core'
 import { createStyles } from '@material-ui/core'
@@ -33,11 +33,14 @@ import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
 import { playSound } from '../helpers/alerts'
 import PreferenceMenu from './PreferenceMenu'
+import { LanguageSelector } from './LanguageSelector'
 
 interface SearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
     checkSlotsCB: () => void
+    checkFavSlotCB: () => void
     monitorSlotsCB: (completionCallback: () => void) => void
+    monitorFavSlotsCB: (completionCallback: () => void) => void
     stopMonitorCB: () => void
 }
 
@@ -50,6 +53,7 @@ export default SearchFilter
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
         <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;
+        <LanguageSelector />
         </p>
         <SimpleTabs {...props} />
     </div>)
@@ -202,6 +206,8 @@ interface CommonSearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
     checkSlotsCB: () => void
     monitorSlotsCB: (completionCallback: () => void) => void
+    checkFavSlotCB: () => void
+    monitorFavSlotsCB: (completionCallback: () => void) => void
     stopMonitorCB: () => void
 }
 
@@ -211,7 +217,7 @@ const CommonSearch = (props: CommonSearchProps) => {
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
     const buttonText = state ? _T('STOP') : _T('MONITOR')
-
+    const buttonTextFav = state ? _T('STOP') : _T('MONITOR_FAVORITE_SLOTS')
     return (<>
         <br />
         <div style={{ alignItems: 'center' }}>
@@ -244,14 +250,14 @@ const CommonSearch = (props: CommonSearchProps) => {
             <br /> <br />
             &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                 onClick={() => {
-                    dispatch(setSlot([]))
+                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
                     props.checkSlotsCB()
                 }}><b>{_T('CHECK_SLOT')}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                 onClick={() => {
                     const monitorState = state
                     setState(!state)
-                    dispatch(setSlot([]))
+                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
                     if (!monitorState) {
                         props.monitorSlotsCB(() => {
                             playSound(() => alert(_T('DONE')))
@@ -262,6 +268,26 @@ const CommonSearch = (props: CommonSearchProps) => {
                         props.stopMonitorCB()
                     }
                 }}><b>{buttonText}</b></Button>
+                &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
+                onClick={() => {
+                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    props.checkFavSlotCB()
+                }}><b>{_T('CHECK_FAV_SLOT')}</b></Button>
+                &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
+                onClick={() => {
+                    const monitorState = state
+                    setState(!state)
+                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    if (!monitorState) {
+                        props.monitorFavSlotsCB(() => {
+                            playSound(() => alert(_T('DONE')))
+                            setState(false)
+
+                        })
+                    } else {
+                        props.stopMonitorCB()
+                    }
+                }}><b>{buttonTextFav}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
                 onClick={() => {
                     window.location.reload()

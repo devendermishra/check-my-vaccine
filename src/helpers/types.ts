@@ -22,6 +22,12 @@ export type FavoriteSite = {
     siteAddress: string
 }
 
+export type Site = {
+    centerId: number
+    siteName: string
+    siteAddress: string
+}
+
 export type AppState = {
     appState: string
 }
@@ -51,6 +57,7 @@ export interface ApplicationState {
     mode?: string
     status?: string
     availableSlots?: SlotData[]
+    unavailableSites?: Site[]
     interval?: number
     language?: string
     threshold?: number
@@ -58,7 +65,12 @@ export interface ApplicationState {
     favoriteSiteSet?: Set<number>
 }
 
+export interface SearchResult {
+    slots: SlotData[]
+    unavailableSites: Site[]
+}
+
 export interface Action {
     type: string,
-    data: number | string | SlotData | SlotData[] | FavoriteSite
+    data: number | string | SlotData | SlotData[] | FavoriteSite | Site[] | SearchResult
 }

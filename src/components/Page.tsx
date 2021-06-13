@@ -5,8 +5,8 @@ import Result from './Result'
 import { useEffect, useState } from 'react'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { checkSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
-import { setConfigs, setSlot } from '../helpers/actions'
+import { checkFavSlots, checkSlots, monitorFavSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
+import { setConfigs, setSearchResult } from '../helpers/actions'
 import { selectLanguage } from '../helpers/multilang'
 import { ApplicationState, FavoriteSite } from '../helpers/types'
 
@@ -43,22 +43,41 @@ export const Page = () => {
         }
         dispatch(setConfigs(thresholdValue, intervalValue, favSites))
     }, [dispatch])
+
     const checkSlotCallback = () => {
         checkSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })
-            dispatch(setSlot(slots))
+            dispatch(setSearchResult(slots))
+        })
+    }
+
+    const checkFavSlotCallback = () => {
+        checkFavSlots(applicationState, (slots) => {
+            setAppState({ appState: DONE_STATE })
+            dispatch(setSearchResult(slots))
         })
     }
 
     const monitorSlotsCallback = (completionCallback: () => void) => {
         monitorSlots(applicationState, (slots) => {
             setAppState({ appState: DONE_STATE })
-            dispatch(setSlot(slots))
+            dispatch(setSearchResult(slots))
             completionCallback()
         }, () => {
             setAppState({ appState: WAITING_STATE })
         })
     }
+
+    const monitorFavSlotsCallback = (completionCallback: () => void) => {
+        monitorFavSlots(applicationState, (slots) => {
+            setAppState({ appState: DONE_STATE })
+            dispatch(setSearchResult(slots))
+            completionCallback()
+        }, () => {
+            setAppState({ appState: WAITING_STATE })
+        })
+    }
+
     const resetMonitorCallback = () => {
         stopMonitoring(() => {
             setAppState({ appState: '' })
@@ -69,6 +88,8 @@ export const Page = () => {
         <div className="row1-mobile">
             <SearchFilter setAppState={setAppState}
                 checkSlotsCB={checkSlotCallback}
+                checkFavSlotCB={checkFavSlotCallback}
+                monitorFavSlotsCB={monitorFavSlotsCallback}
                 monitorSlotsCB={monitorSlotsCallback}
                 stopMonitorCB={resetMonitorCallback} />
         </div>

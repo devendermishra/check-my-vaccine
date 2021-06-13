@@ -3,9 +3,9 @@ import {
     DEL_EXISTING_FAVORITE_SLOT,
     DEL_FAVORITE_SLOT,
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SEARCH_RESULT, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
 } from "./actions";
-import { Action, ApplicationState, FavoriteSite, SlotData } from "./types";
+import { Action, ApplicationState, FavoriteSite, SearchResult, SlotData } from "./types";
 
 
 const intialState: ApplicationState = { interval: 5, threshold: 1, favoriteSite: [], favoriteSiteSet: new Set() }
@@ -74,7 +74,7 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
             return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
         }
-        
+
         case DEL_EXISTING_FAVORITE_SLOT: {
             const site = action.data as FavoriteSite
             let favoriteSites = state.favoriteSite
@@ -88,6 +88,9 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
             localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
             return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
         }
+        case SET_SEARCH_RESULT:
+            const searchResult = action.data as SearchResult
+            return {...state, availableSlots: searchResult.slots, unavailableSites: searchResult.unavailableSites}
 
     }
 

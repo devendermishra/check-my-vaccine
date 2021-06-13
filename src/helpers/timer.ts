@@ -1,7 +1,7 @@
-import { getByDistrict, getSlotsByPIN } from "./api"
+import { getByDistrict, getBySite, getSlotsByPIN } from "./api"
 import { DISTRICT_MODE, PINCODE_MODE } from "./constants"
-import { CenterResponse, VaccineSession } from "./externalTypes"
-import { ApplicationState, SlotData } from "./types"
+import { Center, CenterResponse, SingleCenterResponse, VaccineSession } from "./externalTypes"
+import { ApplicationState, SearchResult, Site, SlotData } from "./types"
 
 //Variable timer interface to change time.
 interface VariableTimer {
@@ -44,7 +44,7 @@ var varTimer: VariableTimer = {
 };
 
 export const monitorSlots = (applicationState: ApplicationState,
-    callback: (slots: SlotData[]) => void,
+    callback: (slots: SearchResult) => void,
     startCallback: () => void) => {
     const interval = applicationState.interval!
     if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
@@ -56,18 +56,35 @@ export const monitorSlots = (applicationState: ApplicationState,
     }
 }
 
+export const monitorFavSlots = (applicationState: ApplicationState,
+    callback: (slots: SearchResult) => void,
+    startCallback: () => void) => {
+    if (applicationState.favoriteSite) {
+        const interval = applicationState.interval!
+        startCallback()
+        varTimer.start(() => monitorFavorite(applicationState, callback), interval * 1000)
+    }
+}
+
 export const stopMonitoring = (callback: () => void) => {
     varTimer.stop()
     callback()
 }
 
 export const checkSlots = (applicationState: ApplicationState,
-    callback: (slots: SlotData[]) => void) => {
+    callback: (searchResult: SearchResult) => void) => {
     if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
         checkPincode(applicationState, callback)
     } else if ((!applicationState.mode || applicationState.mode === DISTRICT_MODE)
         && validateDistrictInput(applicationState)) {
         checkDistrict(applicationState, callback)
+    }
+}
+
+export const checkFavSlots = (applicationState: ApplicationState,
+    callback: (searchResult: SearchResult) => void) => {
+    if (applicationState.favoriteSite) {
+        checkFavorite(applicationState, callback)
     }
 }
 
@@ -79,7 +96,7 @@ const validateDistrictInput = (appliactionState: ApplicationState): boolean => {
     return appliactionState.selectedDistrict !== undefined
 }
 
-const monitorPincode = async (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const monitorPincode = async (applicationState: ApplicationState, callback: (slots: SearchResult) => void) => {
     const pinCode = applicationState.selectedPin!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
@@ -88,7 +105,7 @@ const monitorPincode = async (applicationState: ApplicationState, callback: (slo
     varTimer.setInterval(delayInterval)
 }
 
-const monitorDistrict = async (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const monitorDistrict = async (applicationState: ApplicationState, callback: (slots: SearchResult) => void) => {
     const districtId = applicationState.selectedDistrict!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
@@ -98,62 +115,100 @@ const monitorDistrict = async (applicationState: ApplicationState, callback: (sl
     varTimer.setInterval(delayInterval)
 }
 
-const checkPincode = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const monitorFavorite = (applicationState: ApplicationState, callback: (slots: SearchResult) => void) => {
+    const startDate = getDate(applicationState.selectedWeek !== undefined ?
+        applicationState.selectedWeek : 1)
+    const finalResult: SearchResult = { slots: [], unavailableSites: [] }
+    let counter = 0
+    let sitePromises: Array<Promise<SingleCenterResponse>>  = []
+    applicationState.favoriteSite!.forEach(async site => {
+        if (counter < 5) {
+            let result = getBySite(site.centerId, startDate)
+            sitePromises.push(result)
+            counter++
+        }
+    })
+
+    Promise.all(sitePromises).then(allResults => {
+        allResults.forEach(result => {
+            const matchedSlots = findSiteMatch(result, applicationState)
+            finalResult.slots = finalResult.slots.concat(matchedSlots.slots)
+            finalResult.unavailableSites = finalResult.unavailableSites.concat(matchedSlots.unavailableSites)
+        })
+        if (finalResult.slots.length > 0) {
+            callback(finalResult)
+            varTimer.stop()
+        } else {
+            const delayInterval = Math.floor((Math.random() * 10)) * 1000 + applicationState.interval! * 1000
+            varTimer.setInterval(delayInterval)
+        }
+    })
+}
+
+const checkFavorite = (applicationState: ApplicationState, callback: (slots: SearchResult) => void) => {
+    const startDate = getDate(applicationState.selectedWeek !== undefined ?
+        applicationState.selectedWeek : 1)
+    const finalResult: SearchResult = { slots: [], unavailableSites: [] }
+    let counter = 0
+    let sitePromises: Array<Promise<SingleCenterResponse>>  = []
+    applicationState.favoriteSite!.forEach(async site => {
+        if (counter < 5) {
+            let result = getBySite(site.centerId, startDate)
+            sitePromises.push(result)
+            counter++
+        }
+    })
+
+    Promise.all(sitePromises).then(result => {
+        result.forEach(singleSiteResult => {
+            const matchedSlots = findSiteMatch(singleSiteResult, applicationState)
+            finalResult.slots = finalResult.slots.concat(matchedSlots.slots)
+            finalResult.unavailableSites = finalResult.unavailableSites.concat(matchedSlots.unavailableSites)
+        })
+        if (finalResult.slots.length > 0) {
+            callback(finalResult)
+        }
+    })
+
+}
+
+
+const checkPincode = (applicationState: ApplicationState,
+    callback: (searchResult: SearchResult) => void) => {
     const pinCode = applicationState.selectedPin!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
     getSlotsByPIN(pinCode, startDate).then(centerFilterCheckPromise(applicationState, callback))
 }
 
-const checkDistrict = (applicationState: ApplicationState, callback: (slots: SlotData[]) => void) => {
+const checkDistrict = (applicationState: ApplicationState,
+    callback: (searchResult: SearchResult) => void) => {
     const districtId = applicationState.selectedDistrict!
     const startDate = getDate(applicationState.selectedWeek !== undefined ?
         applicationState.selectedWeek : 1)
     getByDistrict(districtId, startDate).then(centerFilterCheckPromise(applicationState, callback))
 }
 
-
-const findMatch = (centers: CenterResponse, applicationState: ApplicationState): Array<SlotData> => {
+const findSiteMatch = (center: SingleCenterResponse, applicationState: ApplicationState) : SearchResult => {
     const slotData: Array<SlotData> = []
     const threshold = applicationState.threshold ? applicationState.threshold : 1
-    centers.centers.forEach(vaccineCenter => {
-        vaccineCenter.sessions.forEach(session => {
-            if (session.available_capacity >= threshold) {
-                let isMatch = matchThreshold(session, threshold, applicationState.selectedDose)
-                    && matchDose(session, applicationState.selectedDose)
-                    && matchVaccine(session, applicationState.selectedVaccine)
-                    && matchAge(session, applicationState.selectedAge)
+    checkVaccineCenter(center.centers, threshold, applicationState, slotData);
+    return { slots: slotData.sort((a, b) => compareDate(a.date, b.date)), unavailableSites: [] }
+}
 
-                if (isMatch) {
-                    const vaccineFees = vaccineCenter.vaccine_fees ? vaccineCenter
-                        .vaccine_fees
-                        .filter(x => x.vaccine === session.vaccine)
-                        .map(x => x.fee) : []
-                    let vaccineCost: string = ''
-                    if (vaccineFees.length > 0) {
-                        vaccineCost = vaccineFees[0]
-                    }
-                    slotData.push({
-                        siteName: vaccineCenter.name,
-                        siteAddress: vaccineCenter.address,
-                        date: session.date,
-                        slotsAvailable: session.available_capacity,
-                        vaccine: session.vaccine,
-                        firstDose: session.available_capacity_dose1,
-                        secondDose: session.available_capacity_dose2,
-                        age: getAge(applicationState.selectedAge ? applicationState.selectedAge : session.min_age_limit),
-                        feeType: vaccineCenter.fee_type,
-                        vaccineFee: vaccineCost,
-                        lat: vaccineCenter.lat,
-                        sessionId: session.session_id,
-                        long: vaccineCenter.long,
-                        centerId: vaccineCenter.center_id
-                    })
-                }
-            }
-        })
+const findMatch = (centers: CenterResponse, applicationState: ApplicationState): SearchResult => {
+    const slotData: Array<SlotData> = []
+    const unavailableSites: Array<Site> = []
+    const threshold = applicationState.threshold ? applicationState.threshold : 1
+    centers.centers.forEach(vaccineCenter => {
+        const oldLength = slotData.length
+        checkVaccineCenter(vaccineCenter, threshold, applicationState, slotData);
+        if (slotData.length === oldLength) {
+            unavailableSites.push({centerId: vaccineCenter.center_id, siteName: vaccineCenter.name,
+            siteAddress: vaccineCenter.address})
+        }
     });
-    return slotData.sort((a, b) => compareDate(a.date, b.date))
+    return { slots: slotData.sort((a, b) => compareDate(a.date, b.date)), unavailableSites: unavailableSites }
 }
 
 const compareDate = (date1: string, date2: string): number => {
@@ -185,7 +240,7 @@ const getDate = (week: number) => {
 }
 
 const centerFilterCheckPromise = (applicationState: ApplicationState,
-    callback: (slots: SlotData[]) => void): ((value: CenterResponse) =>
+    callback: (slots: SearchResult) => void): ((value: CenterResponse) =>
         void | PromiseLike<void>) | null | undefined => {
     return (centers: CenterResponse) => {
         const matchedSlots = findMatch(centers, applicationState)
@@ -193,10 +248,48 @@ const centerFilterCheckPromise = (applicationState: ApplicationState,
     }
 }
 
-function centerFilterPromise(applicationState: ApplicationState, callback: (slots: SlotData[]) => void): ((value: CenterResponse) => void | PromiseLike<void>) | null | undefined {
+function checkVaccineCenter(vaccineCenter: Center, threshold: number, applicationState: ApplicationState, slotData: SlotData[]) {
+    vaccineCenter.sessions.forEach(session => {
+        if (session.available_capacity >= threshold) {
+            let isMatch = matchThreshold(session, threshold, applicationState.selectedDose)
+                && matchDose(session, applicationState.selectedDose)
+                && matchVaccine(session, applicationState.selectedVaccine)
+                && matchAge(session, applicationState.selectedAge);
+
+            if (isMatch) {
+                const vaccineFees = vaccineCenter.vaccine_fees ? vaccineCenter
+                    .vaccine_fees
+                    .filter(x => x.vaccine === session.vaccine)
+                    .map(x => x.fee) : [];
+                let vaccineCost: string = '';
+                if (vaccineFees.length > 0) {
+                    vaccineCost = vaccineFees[0];
+                }
+                slotData.push({
+                    siteName: vaccineCenter.name,
+                    siteAddress: vaccineCenter.address,
+                    date: session.date,
+                    slotsAvailable: session.available_capacity,
+                    vaccine: session.vaccine,
+                    firstDose: session.available_capacity_dose1,
+                    secondDose: session.available_capacity_dose2,
+                    age: getAge(applicationState.selectedAge ? applicationState.selectedAge : session.min_age_limit),
+                    feeType: vaccineCenter.fee_type,
+                    vaccineFee: vaccineCost,
+                    lat: vaccineCenter.lat,
+                    sessionId: session.session_id,
+                    long: vaccineCenter.long,
+                    centerId: vaccineCenter.center_id
+                });
+            }
+        }
+    });
+}
+
+function centerFilterPromise(applicationState: ApplicationState, callback: (slots: SearchResult) => void): ((value: CenterResponse) => void | PromiseLike<void>) | null | undefined {
     return (centers: CenterResponse) => {
         const matchedSlots = findMatch(centers, applicationState)
-        if (matchedSlots.length > 0) {
+        if (matchedSlots.slots.length > 0) {
             callback(matchedSlots)
             varTimer.stop()
         }
