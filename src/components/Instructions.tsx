@@ -6,18 +6,18 @@ import { _T } from '../helpers/multilang'
 import { Dropdown } from 'react-bootstrap'
 
 
-export const DisclaimerItem = () => {
+export const InstructionsItem = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('DISCL')}
+    return (<><Dropdown.Item onSelect={handleShow}>{_T('INSTR')}
     </Dropdown.Item>
-    <DisclaimerBody show={show} setShow={setShow} />
+        <InstructionsBody show={show} setShow={setShow} />
     </>)
 }
 
-export const DisclaimerModal = () => {
+export const InstructionsModal = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => setShow(true)
     return (
@@ -25,18 +25,18 @@ export const DisclaimerModal = () => {
             <Button variant="contained" color="default"
                 onClick={handleShow}
                 startIcon={<WarningIcon />}>
-                {_T('DISCL')}</Button>
-            <DisclaimerBody show={show} setShow={setShow} />
+                {_T('INSTR')}</Button>
+            <InstructionsBody show={show} setShow={setShow} />
         </>
     );
 };
 
-interface DisclaimerBodyProps {
+interface InstructionsBodyProps {
     show: boolean
     setShow: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DisclaimerBody = (props: DisclaimerBodyProps) => {
+const InstructionsBody = (props: InstructionsBodyProps) => {
 
     const handleClose = () => props.setShow(false);
     return (
@@ -44,16 +44,14 @@ const DisclaimerBody = (props: DisclaimerBodyProps) => {
 
             <Modal show={props.show} onHide={handleClose}>
                 <Modal.Header closeLabel="" closeButton>
-                    <Modal.Title>{_T('DISCL')}</Modal.Title>
+                    <Modal.Title>{_T('INSTR')}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body><ol>
-                    <li>{_T('DISC1')}</li>
-                    <li>{_T('DISC5')}</li>
-                    <li>{_T('DISC6')}</li>
-                    <li>{_T('DISC7')}</li>
-                    <li>{_T('DISC8')}</li>
-                    <li>{_T('DISC9')}</li>
-                    <li>{_T('DISC10')}</li>
+                    <li>{_T('DISC2')}</li>
+                    <li>{_T('DISC3')}</li>
+                    <li>{_T('DISC4')}</li>
+                    <li>{_T('INSTR1')}</li>
+                    <li>{_T('INSTR2')}</li>
                 </ol></Modal.Body>
             </Modal>
         </>

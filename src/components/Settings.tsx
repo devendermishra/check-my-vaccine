@@ -30,7 +30,7 @@ export const SettingsItem = () => {
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('SETTINGS')}
+    return (<><Dropdown.Item onSelect={handleShow}><SettingsIcon />{_T('SETTINGS')}
     </Dropdown.Item>
     <SettingsModalBody show={show} setShow={setShow} />
     </>)
