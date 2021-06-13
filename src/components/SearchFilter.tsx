@@ -249,52 +249,57 @@ const CommonSearch = (props: CommonSearchProps) => {
                 values={weeks} /> &nbsp;&nbsp;{_T('WEEK_MEANS')}
             <br />
                 &nbsp;&nbsp;<TermsModal />
-            <br /> <br />
-            &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
-                onClick={() => {
-                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                    props.checkSlotsCB()
-                }}><b>{_T('CHECK_SLOT')}</b></Button>
-            &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
-                onClick={() => {
-                    const monitorState = state
-                    setState(!state)
-                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                    if (!monitorState) {
-                        props.monitorSlotsCB(() => {
-                            playSound(() => alert(_T('DONE')))
-                            setState(false)
-
-                        })
-                    } else {
-                        props.stopMonitorCB()
-                    }
-                }}><b>{buttonText}</b></Button>
+            <br />
+            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
                 &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
-                onClick={() => {
-                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                    props.checkFavSlotCB()
-                }}><b>{_T('CHECK_FAV_SLOT')}</b></Button>
-                &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
-                onClick={() => {
-                    const monitorState = state
-                    setState(!state)
-                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                    if (!monitorState) {
-                        props.monitorFavSlotsCB(() => {
-                            playSound(() => alert(_T('DONE')))
-                            setState(false)
+                    onClick={() => {
+                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                        props.checkSlotsCB()
+                    }}><b>{_T('CHECK_SLOT')}</b></Button>
+            &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
+                    onClick={() => {
+                        const monitorState = state
+                        setState(!state)
+                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                        if (!monitorState) {
+                            props.monitorSlotsCB(() => {
+                                playSound(() => alert(_T('DONE')))
+                                setState(false)
 
-                        })
-                    } else {
-                        props.stopMonitorCB()
-                    }
-                }}><b>{buttonTextFav}</b></Button>
-            &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
-                onClick={() => {
-                    window.location.reload()
-                }}>{_T('RESET')}</Button>
-            <br /><br />
+                            })
+                        } else {
+                            props.stopMonitorCB()
+                        }
+                    }}><b>{buttonText}</b></Button>
+            </div>
+            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
+                &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
+                    onClick={() => {
+                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                        props.checkFavSlotCB()
+                    }}><b>{_T('CHECK_FAV_SLOT')}</b></Button>
+                &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
+                    onClick={() => {
+                        const monitorState = state
+                        setState(!state)
+                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                        if (!monitorState) {
+                            props.monitorFavSlotsCB(() => {
+                                playSound(() => alert(_T('DONE')))
+                                setState(false)
+
+                            })
+                        } else {
+                            props.stopMonitorCB()
+                        }
+                    }}><b>{buttonTextFav}</b></Button>
+            </div>
+            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
+                &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
+                    onClick={() => {
+                        window.location.reload()
+                    }}>{_T('RESET')}</Button>
+            </div>
         </div>
     </>)
 }
