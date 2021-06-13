@@ -12,7 +12,7 @@ import FormControl from '@material-ui/core/FormControl'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import CancelIcon from '@material-ui/icons/Cancel'
 import ReplayIcon from '@material-ui/icons/Replay'
-import { Dispatch, useEffect, useState } from 'react'
+import React, { Dispatch, useEffect, useState } from 'react'
 import Select from '@material-ui/core/Select'
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputLabel from '@material-ui/core/InputLabel'
@@ -34,6 +34,7 @@ import { _T } from '../helpers/multilang'
 import { playSound } from '../helpers/alerts'
 import { LanguageSelector } from './LanguageSelector'
 import PreferenceMenuDropDown from './PreferenceMenuDropDown'
+import { TermsModal } from './TermsConditions'
 
 interface SearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
@@ -53,7 +54,7 @@ export default SearchFilter
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
         <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;
-        <LanguageSelector /> <PreferenceMenuDropDown />
+        <LanguageSelector /><PreferenceMenuDropDown />
         </p>
         <SimpleTabs {...props} />
     </div>)
@@ -142,7 +143,7 @@ const SearchByPin = (props: CommonSearchProps) => {
                     required
                     style={{ margin: 0, padding: 0 }}
                     placeholder={_T('PINCODE')} />
-                    <FormHelperText>{_T('REQD')}</FormHelperText>
+                <FormHelperText>{_T('REQD')}</FormHelperText>
             </div>
         </div>)
 }
@@ -174,8 +175,8 @@ const Selector = (props: SelectorProps) => {
     const data = values || [];
     return (
         <div>
-            <FormControl required={props.required ? props.required: false}
-            className={classes.formControl}>
+            <FormControl required={props.required ? props.required : false}
+                className={classes.formControl}>
                 <InputLabel id={"demo-simple-select-" + label}>{label}</InputLabel>
                 <Select
                     labelId="demo-simple-select-label"
@@ -190,7 +191,7 @@ const Selector = (props: SelectorProps) => {
                 >
                     {data.map(value => {
                         return (<MenuItem value={value.id} id={label + "-item-" + value.id}
-                        key={label + "-key-" + value.id}
+                            key={label + "-key-" + value.id}
                         >{_T(value.name)}</MenuItem>)
                     })}
                 </Select>
@@ -246,17 +247,19 @@ const CommonSearch = (props: CommonSearchProps) => {
                     dispatch(selectWeek(week))
                 }}
                 values={weeks} /> &nbsp;&nbsp;{_T('WEEK_MEANS')}
+            <br />
+                &nbsp;&nbsp;<TermsModal />
             <br /> <br />
             &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                 onClick={() => {
-                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
                     props.checkSlotsCB()
                 }}><b>{_T('CHECK_SLOT')}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                 onClick={() => {
                     const monitorState = state
                     setState(!state)
-                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
                     if (!monitorState) {
                         props.monitorSlotsCB(() => {
                             playSound(() => alert(_T('DONE')))
@@ -269,14 +272,14 @@ const CommonSearch = (props: CommonSearchProps) => {
                 }}><b>{buttonText}</b></Button>
                 &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                 onClick={() => {
-                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
                     props.checkFavSlotCB()
                 }}><b>{_T('CHECK_FAV_SLOT')}</b></Button>
                 &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                 onClick={() => {
                     const monitorState = state
                     setState(!state)
-                    dispatch(setSearchResult({slots: [], unavailableSites: []}))
+                    dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
                     if (!monitorState) {
                         props.monitorFavSlotsCB(() => {
                             playSound(() => alert(_T('DONE')))

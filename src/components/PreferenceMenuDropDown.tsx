@@ -10,7 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 export default function PreferenceMenuDropDown() {
     return (
         <>
-            <Dropdown>
+            <Dropdown style={{paddingTop: '10px'}}>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                 <MenuIcon color="error" /> {_T('PREFERENCES')}
                 </Dropdown.Toggle>

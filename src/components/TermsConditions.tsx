@@ -22,10 +22,10 @@ export const TermsModal = () => {
     const handleShow = () => setShow(true)
     return (
         <>
-            <Button variant="contained" color="default"
+            <Button variant="text" color="default"
                 onClick={handleShow}
                 startIcon={<WarningIcon />}>
-                {_T('TERMS')}</Button>
+                {_T('TERMS1')}</Button>
             <TermsBody show={show} setShow={setShow} />
         </>
     );
