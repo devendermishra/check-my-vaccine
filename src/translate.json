@@ -66,6 +66,8 @@
 {"id": "TERMS", "en": "Terms and Conditions", "hi": "नियम एवं शर्तें"},
 {"id": "PREFERENCES", "en": "Preferences", "hi": "सेटिंग्स"},
 {"id": "CODE_SOURCE", "en": "Source Code", "hi": "कोड स्रोत"},
+{"id": "ENTER_VALID_PINCODE", "en": "Enter Valid Pincode", "hi": "मान्य पिनकोड दर्ज करें"},
+{"id": "SELECT_STATE_DISTRICT", "en": "Select a state and district", "hi": "कृपया राज्य एवं जनपद का चयन करें|"},
 {"id": "DISC1", "en": "This is a third-party application. It does not facilitate any appointment or booking of vaccine. Booking is to be done only by official medium like Cowin portal, Aarogya Setu or Umang App or other officieal mediums.", "hi": "यह एक तृतीय-पक्ष एप्लिकेशन है। यह किसी भी नियुक्ति या टीके की बुकिंग की सुविधा नहीं देता है। बुकिंग केवल आधिकारिक माध्यम जैसे CoWin पोर्टल, आरोग्य सेतु या उमंग ऐप या अन्य आधिकारिक माध्यमों से ही करें|"},
 {"id": "DISC2", "en": "Please check your state or local guidelines for vaccination.", "hi": "कृपया टीकाकरण के लिए अपने राज्य या स्थानीय दिशानिर्देशों का अनुसरण करें।"},
 {"id": "DISC3", "en": "Please follow Covid-appropriate behaviour and keep yourself safe.", "hi": "कृपया कोविड-उपयुक्त व्यवहार का पालन करें और स्वयं को सुरक्षित रखें।"},

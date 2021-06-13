@@ -20,8 +20,8 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Button from '@material-ui/core/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './SearchFilter.css'
-import { AppState, SelectElement } from '../helpers/types'
-import { useDispatch } from 'react-redux'
+import { ApplicationState, AppState, SelectElement } from '../helpers/types'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     selectAge, selectDistrict, selectDose,
     selectPincode, selectState, selectVaccine,
@@ -35,6 +35,7 @@ import { playSound } from '../helpers/alerts'
 import { LanguageSelector } from './LanguageSelector'
 import PreferenceMenuDropDown from './PreferenceMenuDropDown'
 import { TermsModal } from './TermsConditions'
+import { validateInputs } from '../helpers/timer'
 
 interface SearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
@@ -213,6 +214,7 @@ interface CommonSearchProps {
 const CommonSearch = (props: CommonSearchProps) => {
     const dispatch = useDispatch()
     const [state, setState] = useState(false)
+    const applicationState: ApplicationState = useSelector(x => x) as ApplicationState
     const buttonColor = state ? "secondary" : "primary"
     const buttonIcon = state ? <CancelIcon /> : <PlayArrowIcon />
     const buttonText = state ? _T('STOP') : _T('MONITOR')
@@ -257,17 +259,19 @@ const CommonSearch = (props: CommonSearchProps) => {
                     }}><b>{_T('CHECK_SLOT')}</b></Button>
             &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                     onClick={() => {
-                        const monitorState = state
-                        setState(!state)
-                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                        if (!monitorState) {
-                            props.monitorSlotsCB(() => {
-                                playSound(() => alert(_T('DONE')))
-                                setState(false)
+                        if (validateInputs(applicationState)) {
+                            const monitorState = state
+                            setState(!state)
+                            dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                            if (!monitorState) {
+                                props.monitorSlotsCB(() => {
+                                    playSound(() => alert(_T('DONE')))
+                                    setState(false)
 
-                            })
-                        } else {
-                            props.stopMonitorCB()
+                                })
+                            } else {
+                                props.stopMonitorCB()
+                            }
                         }
                     }}><b>{buttonText}</b></Button>
             </div>
@@ -279,17 +283,19 @@ const CommonSearch = (props: CommonSearchProps) => {
                     }}><b>{_T('CHECK_FAV_SLOT')}</b></Button>
                 &nbsp;&nbsp;<Button variant="contained" color={buttonColor} startIcon={buttonIcon}
                     onClick={() => {
-                        const monitorState = state
-                        setState(!state)
-                        dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
-                        if (!monitorState) {
-                            props.monitorFavSlotsCB(() => {
-                                playSound(() => alert(_T('DONE')))
-                                setState(false)
+                        if (applicationState.favoriteSite && applicationState.favoriteSite.length > 0) {
+                            const monitorState = state
+                            setState(!state)
+                            dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
+                            if (!monitorState) {
+                                props.monitorFavSlotsCB(() => {
+                                    playSound(() => alert(_T('DONE')))
+                                    setState(false)
 
-                            })
-                        } else {
-                            props.stopMonitorCB()
+                                })
+                            } else {
+                                props.stopMonitorCB()
+                            }
                         }
                     }}><b>{buttonTextFav}</b></Button>
             </div>

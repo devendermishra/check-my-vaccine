@@ -1,6 +1,7 @@
 import { getByDistrict, getBySite, getSlotsByPIN } from "./api"
 import { DISTRICT_MODE, PINCODE_MODE } from "./constants"
 import { Center, CenterResponse, SingleCenterResponse, VaccineSession } from "./externalTypes"
+import { _T } from "./multilang";
 import { ApplicationState, SearchResult, Site, SlotData } from "./types"
 
 //Variable timer interface to change time.
@@ -15,6 +16,7 @@ interface VariableTimer {
     setInterval: (iv: number) => void
 }
 
+const favSlotsInterval = 20
 var varTimer: VariableTimer = {
     running: false,
     iv: 5000,
@@ -47,12 +49,20 @@ export const monitorSlots = (applicationState: ApplicationState,
     callback: (slots: SearchResult) => void,
     startCallback: () => void) => {
     const interval = applicationState.interval!
-    if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
-        startCallback()
-        varTimer.start(() => monitorPincode(applicationState, callback), interval * 1000)
-    } else if (applicationState.mode === DISTRICT_MODE && validateDistrictInput(applicationState)) {
-        startCallback()
-        varTimer.start(() => monitorDistrict(applicationState, callback), interval * 1000)
+    if (applicationState.mode === PINCODE_MODE) {
+        if (validatePincodeInput(applicationState)) {
+            startCallback()
+            varTimer.start(() => monitorPincode(applicationState, callback), interval * 1000)
+        } else {
+            alert(_T('ENTER_VALID_PINCODE'))
+        }
+    } else if (applicationState.mode === DISTRICT_MODE) {
+        if (validateDistrictInput(applicationState)) {
+            startCallback()
+            varTimer.start(() => monitorDistrict(applicationState, callback), interval * 1000)
+        } else {
+            alert(_T('SELECT_STATE_DISTRICT'))
+        }
     }
 }
 
@@ -60,7 +70,7 @@ export const monitorFavSlots = (applicationState: ApplicationState,
     callback: (slots: SearchResult) => void,
     startCallback: () => void) => {
     if (applicationState.favoriteSite) {
-        const interval = applicationState.interval!
+        const interval = favSlotsInterval
         startCallback()
         varTimer.start(() => monitorFavorite(applicationState, callback), interval * 1000)
     }
@@ -73,12 +83,35 @@ export const stopMonitoring = (callback: () => void) => {
 
 export const checkSlots = (applicationState: ApplicationState,
     callback: (searchResult: SearchResult) => void) => {
-    if (applicationState.mode === PINCODE_MODE && validatePincodeInput(applicationState)) {
-        checkPincode(applicationState, callback)
-    } else if ((!applicationState.mode || applicationState.mode === DISTRICT_MODE)
-        && validateDistrictInput(applicationState)) {
-        checkDistrict(applicationState, callback)
+    if (applicationState.mode === PINCODE_MODE) {
+        if (validatePincodeInput(applicationState)) {
+            checkPincode(applicationState, callback)
+        } else {
+            alert(_T('ENTER_VALID_PINCODE'))
+        }
+    } else if ((!applicationState.mode || applicationState.mode === DISTRICT_MODE)) {
+        if (validateDistrictInput(applicationState)) {
+            checkDistrict(applicationState, callback)
+        } else {
+            alert(_T('SELECT_STATE_DISTRICT'))
+        }
     }
+}
+
+export const validateInputs = (applicationState: ApplicationState) => {
+    if (applicationState.mode === PINCODE_MODE) {
+        if (!validatePincodeInput(applicationState)) {
+            alert(_T('ENTER_VALID_PINCODE'))
+            return false
+        }
+    } else if ((!applicationState.mode || applicationState.mode === DISTRICT_MODE)) {
+        if (!validateDistrictInput(applicationState)) {
+            alert(_T('SELECT_STATE_DISTRICT'))
+            return false
+        }
+    }
+
+    return true
 }
 
 export const checkFavSlots = (applicationState: ApplicationState,
@@ -120,7 +153,7 @@ const monitorFavorite = (applicationState: ApplicationState, callback: (slots: S
         applicationState.selectedWeek : 1)
     const finalResult: SearchResult = { slots: [], unavailableSites: [] }
     let counter = 0
-    let sitePromises: Array<Promise<SingleCenterResponse>>  = []
+    let sitePromises: Array<Promise<SingleCenterResponse>> = []
     applicationState.favoriteSite!.forEach(async site => {
         if (counter < 5) {
             let result = getBySite(site.centerId, startDate)
@@ -139,7 +172,7 @@ const monitorFavorite = (applicationState: ApplicationState, callback: (slots: S
             callback(finalResult)
             varTimer.stop()
         } else {
-            const delayInterval = Math.floor((Math.random() * 10)) * 1000 + applicationState.interval! * 1000
+            const delayInterval = Math.floor((Math.random() * 10)) * 1000 + favSlotsInterval * 1000
             varTimer.setInterval(delayInterval)
         }
     })
@@ -150,7 +183,7 @@ const checkFavorite = (applicationState: ApplicationState, callback: (slots: Sea
         applicationState.selectedWeek : 1)
     const finalResult: SearchResult = { slots: [], unavailableSites: [] }
     let counter = 0
-    let sitePromises: Array<Promise<SingleCenterResponse>>  = []
+    let sitePromises: Array<Promise<SingleCenterResponse>> = []
     applicationState.favoriteSite!.forEach(async site => {
         if (counter < 5) {
             let result = getBySite(site.centerId, startDate)
@@ -189,7 +222,7 @@ const checkDistrict = (applicationState: ApplicationState,
     getByDistrict(districtId, startDate).then(centerFilterCheckPromise(applicationState, callback))
 }
 
-const findSiteMatch = (center: SingleCenterResponse, applicationState: ApplicationState) : SearchResult => {
+const findSiteMatch = (center: SingleCenterResponse, applicationState: ApplicationState): SearchResult => {
     const slotData: Array<SlotData> = []
     const threshold = applicationState.threshold ? applicationState.threshold : 1
     checkVaccineCenter(center.centers, threshold, applicationState, slotData);
@@ -204,8 +237,10 @@ const findMatch = (centers: CenterResponse, applicationState: ApplicationState):
         const oldLength = slotData.length
         checkVaccineCenter(vaccineCenter, threshold, applicationState, slotData);
         if (slotData.length === oldLength) {
-            unavailableSites.push({centerId: vaccineCenter.center_id, siteName: vaccineCenter.name,
-            siteAddress: vaccineCenter.address})
+            unavailableSites.push({
+                centerId: vaccineCenter.center_id, siteName: vaccineCenter.name,
+                siteAddress: vaccineCenter.address
+            })
         }
     });
     return { slots: slotData.sort((a, b) => compareDate(a.date, b.date)), unavailableSites: unavailableSites }
