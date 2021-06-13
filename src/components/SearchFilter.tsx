@@ -84,13 +84,12 @@ export function SimpleTabs(props: SearchProps) {
             >
                 <Tab eventKey="dist" title={_T('BY_DISTRICT')}>
                     <SearchByState {...props} />
-                    <CommonSearch {...props} />
                 </Tab>
                 <Tab eventKey="pin" title={_T('BY_PINCODE')}>
                     <SearchByPin {...props} />
-                    <CommonSearch {...props} />
                 </Tab>
             </Tabs>
+            <CommonSearch {...props} />
         </div>
     );
 }
@@ -250,7 +249,7 @@ const CommonSearch = (props: CommonSearchProps) => {
             <br />
                 &nbsp;&nbsp;<TermsModal />
             <br />
-            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
+            <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                 &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                     onClick={() => {
                         dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
@@ -272,7 +271,7 @@ const CommonSearch = (props: CommonSearchProps) => {
                         }
                     }}><b>{buttonText}</b></Button>
             </div>
-            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
+            <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                 &nbsp;&nbsp;<Button variant="contained" color="primary" startIcon={<VisibilityIcon />}
                     onClick={() => {
                         dispatch(setSearchResult({ slots: [], unavailableSites: [] }))
@@ -294,7 +293,7 @@ const CommonSearch = (props: CommonSearchProps) => {
                         }
                     }}><b>{buttonTextFav}</b></Button>
             </div>
-            <div style={{paddingTop: "5px", paddingBottom: "5px"}}>
+            <div style={{ paddingTop: "5px", paddingBottom: "5px" }}>
                 &nbsp;&nbsp;<Button variant="contained" color="default" startIcon={<ReplayIcon />}
                     onClick={() => {
                         window.location.reload()
