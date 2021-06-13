@@ -25,7 +25,7 @@ export const FavoriteItem = () => {
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('FAVORITE_SITES')}
+    return (<><Dropdown.Item onSelect={handleShow}><FavoriteIcon />&nbsp;{_T('FAVORITE_SITES')}
     </Dropdown.Item>
     <FavoriteModalBody show={show} setShow={setShow} />
     </>)

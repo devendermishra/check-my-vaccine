@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
 import { _T } from '../helpers/multilang'
 import { Dropdown } from 'react-bootstrap'
+import PanToolIcon from '@material-ui/icons/PanTool';
 
 
 export const TermsItem = () => {
@@ -11,7 +12,7 @@ export const TermsItem = () => {
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('TERMS')}
+    return (<><Dropdown.Item onSelect={handleShow}><PanToolIcon />&nbsp;{_T('TERMS')}
     </Dropdown.Item>
     <TermsBody show={show} setShow={setShow} />
     </>)

@@ -6,6 +6,7 @@ import { DisclaimerItem } from './DisclaimerModal'
 import { InstructionsItem } from './Instructions'
 import { TermsItem } from './TermsConditions'
 import MenuIcon from '@material-ui/icons/Menu'
+import GitHubIcon from '@material-ui/icons/GitHub'
 
 export default function PreferenceMenuDropDown() {
     return (
@@ -22,6 +23,9 @@ export default function PreferenceMenuDropDown() {
                     <Dropdown.Divider />
                     <DisclaimerItem />
                     <TermsItem />
+                    <Dropdown.Divider />
+                    <Dropdown.Item href="https://github.com/devendermishra/check-my-vaccine"><GitHubIcon />&nbsp;{_T('CODE_SOURCE')}
+    </Dropdown.Item>
                 </Dropdown.Menu>
             </Dropdown>
         </>

@@ -11,7 +11,7 @@ export const DisclaimerItem = () => {
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('DISCL')}
+    return (<><Dropdown.Item onSelect={handleShow}><WarningIcon />&nbsp;{_T('DISCL')}
     </Dropdown.Item>
     <DisclaimerBody show={show} setShow={setShow} />
     </>)

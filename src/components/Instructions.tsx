@@ -4,14 +4,14 @@ import Modal from 'react-bootstrap/Modal'
 import Button from '@material-ui/core/Button'
 import { _T } from '../helpers/multilang'
 import { Dropdown } from 'react-bootstrap'
-
+import DirectionsIcon from '@material-ui/icons/Directions'
 
 export const InstructionsItem = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => {
         setShow(true)
     }
-    return (<><Dropdown.Item onSelect={handleShow}>{_T('INSTR')}
+    return (<><Dropdown.Item onSelect={handleShow}><DirectionsIcon />&nbsp;{_T('INSTR')}
     </Dropdown.Item>
         <InstructionsBody show={show} setShow={setShow} />
     </>)
