@@ -32,8 +32,8 @@ import { createStyles } from '@material-ui/core'
 import { getDistricts, getStates } from '../helpers/api'
 import { _T } from '../helpers/multilang'
 import { playSound } from '../helpers/alerts'
-import PreferenceMenu from './PreferenceMenu'
 import { LanguageSelector } from './LanguageSelector'
+import PreferenceMenuDropDown from './PreferenceMenuDropDown'
 
 interface SearchProps {
     setAppState: React.Dispatch<React.SetStateAction<AppState>>
@@ -53,7 +53,7 @@ export default SearchFilter
 const SearchFilterDesktop = (props: SearchProps) => {
     return (<div className="search-filter">
         <p className="heading"><b>{_T('FILTERS')}</b>&nbsp;&nbsp;
-        <LanguageSelector />
+        <LanguageSelector /> <PreferenceMenuDropDown />
         </p>
         <SimpleTabs {...props} />
     </div>)
@@ -69,7 +69,6 @@ export function SimpleTabs(props: SearchProps) {
 
     return (
         <div className={classes.root}>
-            <PreferenceMenu/><br/>
             <Tabs
                 variant="pills"
                 id="controlled-tab-example"

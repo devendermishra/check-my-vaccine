@@ -4,13 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createStore } from 'redux';
-import reducer from './helpers/reducers';
+import reducer, { loadInitialState } from './helpers/reducers';
 import { Provider } from 'react-redux';
 import { loadLanguage } from './helpers/multilang';
 import translationFile from './translate.json'
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import { ApplicationState } from './helpers/types';
 
-const store = createStore(reducer);
+
+const store = createStore(reducer, loadInitialState());
+store.subscribe(() => {
+  localStorage.setItem('fav_sites', JSON.stringify((store.getState() as ApplicationState).favoriteSite))
+});
 loadLanguage(translationFile)
 
 ReactDOM.render(

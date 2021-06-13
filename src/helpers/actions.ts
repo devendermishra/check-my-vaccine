@@ -1,4 +1,4 @@
-import { Action, FavoriteSite, SearchResult, SlotData } from "./types"
+import { Action, FavoriteSite, SearchResult, Site, SlotData } from "./types"
 
 export const SELECT_STATE = 'SELECT_STATE'
 export const SELECT_DISTRICT = 'SELECT_DISTRICT'
@@ -18,6 +18,8 @@ export const ADD_FAVORITE_SLOT = 'ADD_FAVORITE_SLOT'
 export const DEL_FAVORITE_SLOT = 'DEL_FAVORITE_SLOT'
 export const DEL_EXISTING_FAVORITE_SLOT = 'DEL_EXISTING_FAVORITE_SLOT'
 export const SET_SEARCH_RESULT = 'SET_SEARCH_RESULT'
+export const ADD_FAV_SITE = 'ADD_FAV_SITE'
+export const DEL_FAV_SITE = 'DEL_FAV_SITE'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -40,3 +42,11 @@ export const setFavSlot = (slot: SlotData): Action => ({ type: ADD_FAVORITE_SLOT
 export const delFavSlot = (slot: SlotData): Action => ({ type: DEL_FAVORITE_SLOT, data: slot })
 export const remFavSlot = (slot: FavoriteSite): Action => ({type: DEL_EXISTING_FAVORITE_SLOT, data: slot})
 export const setSearchResult = (result: SearchResult): Action => ({type: SET_SEARCH_RESULT, data: result})
+export const addFavSite = (site: Site): Action => {
+    const favSite: FavoriteSite = {...site}
+    return ({type: ADD_FAV_SITE, data: favSite})
+}
+export const delFavSite = (site: Site): Action => {
+    const favSite: FavoriteSite = {...site}
+    return ({type: DEL_FAV_SITE, data: favSite})
+}

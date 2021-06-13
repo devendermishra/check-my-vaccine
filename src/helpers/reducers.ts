@@ -1,14 +1,45 @@
 import {
     ADD_FAVORITE_SLOT,
+    ADD_FAV_SITE,
     DEL_EXISTING_FAVORITE_SLOT,
     DEL_FAVORITE_SLOT,
+    DEL_FAV_SITE,
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
     SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SEARCH_RESULT, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
 } from "./actions";
-import { Action, ApplicationState, FavoriteSite, SearchResult, SlotData } from "./types";
+import { Action, ApplicationState, FavoriteSite, SearchResult, Site, SlotData } from "./types";
 
 
 const intialState: ApplicationState = { interval: 5, threshold: 1, favoriteSite: [], favoriteSiteSet: new Set() }
+export const loadInitialState = (): ApplicationState => {
+    let interval = localStorage.getItem('preferred_interval')
+        let intervalValue = 5
+        if (interval) {
+            intervalValue = parseInt(interval)
+        }
+        let threshold = localStorage.getItem('min_threshold')
+        let thresholdValue = 1
+        if (threshold) {
+            thresholdValue = parseInt(threshold)
+        }
+        let favSites: FavoriteSite[] = []
+        let favSiteString = localStorage.getItem('fav_sites')
+        if (favSiteString) {
+            favSites = JSON.parse(favSiteString)
+        }
+        const favSiteSet = new Set(favSites.map(x=> x.centerId))
+        if (isNaN(intervalValue)) {
+            intervalValue = 5
+        }
+        if (isNaN(thresholdValue)) {
+            thresholdValue = 1
+        }
+
+        const initialState: ApplicationState =
+        { interval: intervalValue, threshold: thresholdValue,
+            favoriteSite: favSites, favoriteSiteSet: favSiteSet}
+        return initialState;
+}
 
 const reducer = (state = intialState, action: Action): ApplicationState => {
     switch (action.type) {
@@ -46,47 +77,24 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
         case ADD_FAVORITE_SLOT: {
             let slot = action.data as SlotData
             let favoriteSite: FavoriteSite = { centerId: slot.centerId, siteName: slot.siteName, siteAddress: slot.siteAddress }
-            let favoriteSites = state.favoriteSite
-            if (!favoriteSites) {
-                favoriteSites = []
-            }
-            let favoriteSiteSet = state.favoriteSiteSet
-            if (!favoriteSiteSet) {
-                favoriteSiteSet = new Set()
-            }
-            if (!favoriteSiteSet.has(slot.centerId)) {
-                favoriteSites.push(favoriteSite)
-                favoriteSiteSet.add(slot.centerId)
-            }
-            localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
-            return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
+            return addFavoriteSlot(state, slot.centerId, favoriteSite);
         }
         case DEL_FAVORITE_SLOT: {
             let slot = action.data as SlotData
-            let favoriteSites = state.favoriteSite
-            if (favoriteSites) {
-                favoriteSites = favoriteSites.filter(x => x.centerId !== slot.centerId)
-            }
-            let favoriteSiteSet = state.favoriteSiteSet
-            if (favoriteSiteSet) {
-                favoriteSiteSet.delete(slot.centerId)
-            }
-            localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
-            return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
+            return removeFavoriteSlot(state, slot.centerId);
         }
-
+        case ADD_FAV_SITE: {
+            let site = action.data as Site
+            let favoriteSite: FavoriteSite = { ...site }
+            return addFavoriteSlot(state, site.centerId, favoriteSite);
+        }
+        case DEL_FAV_SITE: {
+            let site = action.data as Site
+            return removeFavoriteSlot(state, site.centerId);
+        }
         case DEL_EXISTING_FAVORITE_SLOT: {
             const site = action.data as FavoriteSite
-            let favoriteSites = state.favoriteSite
-            if (favoriteSites) {
-                favoriteSites = favoriteSites.filter(x => x.centerId !== site.centerId)
-            }
-            let favoriteSiteSet = state.favoriteSiteSet
-            if (favoriteSiteSet) {
-                favoriteSiteSet.delete(site.centerId)
-            }
-            localStorage.setItem('fav_sites', JSON.stringify(favoriteSites))
-            return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet }
+            return removeFavoriteSlot(state, site.centerId)
         }
         case SET_SEARCH_RESULT:
             const searchResult = action.data as SearchResult
@@ -98,3 +106,31 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
 }
 
 export default reducer;
+
+function removeFavoriteSlot(state: ApplicationState, centerId: number) {
+    let favoriteSites = state.favoriteSite;
+    if (favoriteSites) {
+        favoriteSites = favoriteSites.filter(x => x.centerId !== centerId);
+    }
+    let favoriteSiteSet = state.favoriteSiteSet;
+    if (favoriteSiteSet) {
+        favoriteSiteSet.delete(centerId);
+    }
+    return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet };
+}
+
+function addFavoriteSlot(state: ApplicationState, centerId: number, favoriteSite: FavoriteSite) {
+    let favoriteSites = state.favoriteSite;
+    if (!favoriteSites) {
+        favoriteSites = [];
+    }
+    let favoriteSiteSet = state.favoriteSiteSet;
+    if (!favoriteSiteSet) {
+        favoriteSiteSet = new Set();
+    }
+    if (!favoriteSiteSet.has(centerId)) {
+        favoriteSites.push(favoriteSite);
+        favoriteSiteSet.add(centerId);
+    }
+    return { ...state, favoriteSite: favoriteSites, favoriteSiteSet: favoriteSiteSet };
+}

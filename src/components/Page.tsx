@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react'
 import { DONE_STATE, WAITING_STATE } from '../helpers/constants'
 import { useDispatch, useSelector } from 'react-redux'
 import { checkFavSlots, checkSlots, monitorFavSlots, monitorSlots, stopMonitoring } from '../helpers/timer'
-import { setConfigs, setSearchResult } from '../helpers/actions'
+import { setSearchResult } from '../helpers/actions'
 import { selectLanguage } from '../helpers/multilang'
-import { ApplicationState, FavoriteSite } from '../helpers/types'
+import { ApplicationState } from '../helpers/types'
+
 
 export const Page = () => {
     const pageClass = !isMobile ? "page" : "page-mobile"
@@ -20,28 +21,6 @@ export const Page = () => {
         if (langCode) {
             selectLanguage(langCode)
         }
-        let interval = localStorage.getItem('preferred_interval')
-        let intervalValue = 5
-        if (interval) {
-            intervalValue = parseInt(interval)
-        }
-        let threshold = localStorage.getItem('min_threshold')
-        let thresholdValue = 1
-        if (threshold) {
-            thresholdValue = parseInt(threshold)
-        }
-        let favSites: FavoriteSite[] = []
-        let favSiteString = localStorage.getItem('fav_sites')
-        if (favSiteString) {
-            favSites = JSON.parse(favSiteString)
-        }
-        if (isNaN(intervalValue)) {
-            intervalValue = 5
-        }
-        if (isNaN(thresholdValue)) {
-            thresholdValue = 1
-        }
-        dispatch(setConfigs(thresholdValue, intervalValue, favSites))
     }, [dispatch])
 
     const checkSlotCallback = () => {

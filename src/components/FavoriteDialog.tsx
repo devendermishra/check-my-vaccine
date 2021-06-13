@@ -13,32 +13,22 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Table from 'react-bootstrap/esm/Table'
-import MenuItem from '@material-ui/core/MenuItem'
+import { Dropdown } from 'react-bootstrap'
 
 export const Favorite = () => {
 
     return (<><FavoriteModal /></>)
 }
 
-interface FavoriteMenuProps {
-    menuCallback: () => void
-}
-
-export const FavoriteMenu = (props: FavoriteMenuProps) => {
+export const FavoriteItem = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => {
-        if (props.menuCallback) {
-            props.menuCallback()
-        }
         setShow(true)
     }
-
-    return (
-        <>
-            <MenuItem onClick={handleShow}><FavoriteIcon color='primary' />&nbsp;&nbsp;{_T('FAVORITE_SITES')}</MenuItem>
-            <FavoriteModalBody show={show} setShow={setShow} />
-        </>
-    )
+    return (<><Dropdown.Item onSelect={handleShow}>{_T('FAVORITE_SITES')}
+    </Dropdown.Item>
+    <FavoriteModalBody show={show} setShow={setShow} />
+    </>)
 }
 
 const FavoriteModal = () => {

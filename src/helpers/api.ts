@@ -1,5 +1,4 @@
 import { CenterResponse, DistrictResponse, SingleCenterResponse, StateResponse } from "./externalTypes"
-import { ApplicationState } from "./types"
 
 export const baseUrl = 'https://cdn-api.co-vin.in/'
 

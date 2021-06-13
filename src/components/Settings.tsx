@@ -17,7 +17,7 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import { Dispatch } from 'redux'
 import { isMobile } from 'react-device-detect'
-import MenuItem from '@material-ui/core/MenuItem'
+import { Dropdown } from 'react-bootstrap';
 
 
 export const Settings = () => {
@@ -25,25 +25,15 @@ export const Settings = () => {
     return (<><SettingsModal /></>)
 }
 
-interface SettingsMenuProps {
-    menuCallback : () => void
-}
-
-export const SettingsMenu = (props: SettingsMenuProps) => {
+export const SettingsItem = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => {
-        if (props.menuCallback) {
-            props.menuCallback()
-        }
         setShow(true)
     }
-
-    return (
-        <>
-            <MenuItem onClick={handleShow}><SettingsIcon color='primary'/>&nbsp;&nbsp;{_T('SETTINGS')}</MenuItem>
-            <SettingsModalBody show={show} setShow={setShow} />
-        </>
-    )
+    return (<><Dropdown.Item onSelect={handleShow}>{_T('SETTINGS')}
+    </Dropdown.Item>
+    <SettingsModalBody show={show} setShow={setShow} />
+    </>)
 }
 
 const SettingsModal = () => {
@@ -66,7 +56,6 @@ interface SettingsModalBodyProps {
 }
 
 const SettingsModalBody = (props: SettingsModalBodyProps) => {
-    //const [show, setShow] = useState(false)
     const handleClose = () => props.setShow(false)
     const dispatch = useDispatch()
 

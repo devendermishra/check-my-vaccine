@@ -1,31 +1,20 @@
-import WarningIcon from '@material-ui/icons/Warning';
-import { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from '@material-ui/core/Button';
-import { _T } from '../helpers/multilang';
+import WarningIcon from '@material-ui/icons/Warning'
+import { useState } from 'react'
+import Modal from 'react-bootstrap/Modal'
+import Button from '@material-ui/core/Button'
+import { _T } from '../helpers/multilang'
+import { Dropdown } from 'react-bootstrap'
 
-import MenuItem from '@material-ui/core/MenuItem'
 
-
-interface DisclaimerMenuProps {
-    menuCallback: () => void
-}
-
-export const DisclaimerMenu = (props: DisclaimerMenuProps) => {
+export const DisclaimerItem = () => {
     const [show, setShow] = useState(false)
     const handleShow = () => {
-        if (props.menuCallback) {
-            props.menuCallback()
-        }
         setShow(true)
     }
-
-    return (
-        <>
-            <MenuItem onClick={handleShow}><WarningIcon color='secondary'/>&nbsp;&nbsp;{_T('DISCL')}</MenuItem>
-            <DisclaimerBody show={show} setShow={setShow} />
-        </>
-    )
+    return (<><Dropdown.Item onSelect={handleShow}>{_T('DISCL')}
+    </Dropdown.Item>
+    <DisclaimerBody show={show} setShow={setShow} />
+    </>)
 }
 
 export const DisclaimerModal = () => {
