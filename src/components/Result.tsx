@@ -204,6 +204,7 @@ const AvailableSlotsTable = (props: AvailableSlotsProps) => {
             </tr>))}
             {isMobile && slotData.map(slot => (<tr key={'Mresult-' + slot.sessionId}>
                 <td>{slot.siteName}
+                    &nbsp;&nbsp;<FavoriteSlot slot={slot} favoriteSiteSet={applicationState.favoriteSiteSet} />
                     <br /> {_T('DATE')}: <b>{slot.date}</b>
                     <br />{_T('AGE')}: <b>{slot.age}</b>
                     <br />{_T('VACCINE')}: <b>{_T(slot.vaccine)}</b>
