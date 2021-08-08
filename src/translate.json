@@ -86,5 +86,8 @@
 {"id": "TERMS4", "en": "User can set the limit accordingly. Default limits are to ensure that IP should not get blocked as per the limit of 100 requests per 5 minutes per IP.", "hi": "उपयोगकर्ता अपने अनुसार अंतराल सीमा निर्धारित कर सकता है। डिफ़ॉल्ट सीमा यह सुनिश्चित करने के लिए है कि आईपी प्रति 5 मिनट प्रति आईपी 100 अनुरोधों की सीमा के अनुसार अवरुद्ध नहीं होना चाहिए।"},
 {"id": "TERMS5", "en": "There shall be no liability on the developer/maintainer/provider for anything.", "hi": "किसी भी चीज के लिए विकासकर्ता/ अनुरक्षणकर्ता/प्रदाता पर कोई दायित्व नहीं होगा।"},
 {"id": "TERMS6", "en": "Future updates are the on discretion of developer/maintainer/provider.", "hi": "भविष्य के अपडेट डेवलपर/रखरखाव/प्रदाता के विवेक पर हैं।"},
-{"id": "TERMS7", "en": "Terms and Conditions can be changed.", "hi": "नियम और शर्तों को बदला जा सकता है।"}
+{"id": "TERMS7", "en": "Terms and Conditions can be changed.", "hi": "नियम और शर्तों को बदला जा सकता है।"},
+{"id": "FEE_TYPE", "en": "Fee Type", "hi": "शुल्क"},
+{"id": "FREE", "en": "Free", "hi": "निःशुल्क"},
+{"id": "PAID", "en": "Paid", "hi": "सशुल्क"}
 ]

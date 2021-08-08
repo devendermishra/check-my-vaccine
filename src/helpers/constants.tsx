@@ -8,10 +8,10 @@ export const vaccineTypes: Record<number, string> = {
 }
 
 export const ageTypes: Record<number, string> = { 0: "ALL", 18: "18+", 45: "45+" }
-
+export const freeTypes: Record<number, string> = {0: "ALL", 1: "FREE", 2: "PAID"}
 export const availableVaccines = mapToList(vaccineTypes)
 export const ageGroups = mapToList(ageTypes)
-
+export const feeGroups = mapToList(freeTypes)
 
 export const doses = range(1, 2 + 1, 1).map(intToSelectionList)
     .reverse()

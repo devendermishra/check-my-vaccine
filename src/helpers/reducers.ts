@@ -5,7 +5,7 @@ import {
     DEL_FAVORITE_SLOT,
     DEL_FAV_SITE,
     SELECT_AGE, SELECT_DISTRICT, SELECT_DOSE,
-    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SEARCH_RESULT, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
+    SELECT_PINCODE, SELECT_STATE, SELECT_VACCINE, SELECT_WEEK, SET_FREE, SET_INTERVAL, SET_LANGUAGE, SET_MODE, SET_SEARCH_RESULT, SET_SLOT, SET_STORAGE_CONFIGS, SET_THRESHOLD
 } from "./actions";
 import { Action, ApplicationState, FavoriteSite, SearchResult, Site, SlotData } from "./types";
 
@@ -99,7 +99,8 @@ const reducer = (state = intialState, action: Action): ApplicationState => {
         case SET_SEARCH_RESULT:
             const searchResult = action.data as SearchResult
             return {...state, availableSlots: searchResult.slots, unavailableSites: searchResult.unavailableSites}
-
+        case SET_FREE:
+            return {...state, free: action.data as string}
     }
 
     return state

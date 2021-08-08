@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core'
 import {
     availableVaccines, ageGroups,
     weeks, doses, DISTRICT_MODE,
-    PINCODE_MODE, vaccineTypes
+    PINCODE_MODE, vaccineTypes, freeTypes, feeGroups
 } from '../helpers/constants'
 import Tab from 'react-bootstrap/Tab'
 import Tabs from 'react-bootstrap/Tabs'
@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
     selectAge, selectDistrict, selectDose,
     selectPincode, selectState, selectVaccine,
-    selectWeek, setMode, setSearchResult
+    selectWeek, setFree, setMode, setSearchResult
 } from '../helpers/actions'
 import { Theme } from '@material-ui/core'
 import { createStyles } from '@material-ui/core'
@@ -236,13 +236,22 @@ const CommonSearch = (props: CommonSearchProps) => {
             </div>
         </div>
         <br />
+        <div style={{ alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Selector label={_T('AGE_GRP')}
+                    callback={(ageId: number) => {
+                        dispatch(selectAge(ageId))
+                    }}
+                    values={ageGroups} /><br />
+                <Selector label={_T('FEE_TYPE')}
+                    callback={(index: number) => {
+                        dispatch(setFree(freeTypes[index]))
+                    }}
+                    values={feeGroups} />
+                <br />
+            </div>
+        </div>
         <div style={{ alignItems: 'start', alignContent: 'start', textAlign: 'left' }}>
-            <Selector label={_T('AGE_GRP')}
-                callback={(ageId: number) => {
-                    dispatch(selectAge(ageId))
-                }}
-                values={ageGroups} /><br />
-
             <Selector label={_T("WEEK")}
                 callback={(week) => {
                     dispatch(selectWeek(week))

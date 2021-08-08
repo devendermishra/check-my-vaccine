@@ -54,6 +54,7 @@ export interface ApplicationState {
     selectedVaccine?: string
     selectedWeek?: number
     selectedAge?: number
+    free?: string
     mode?: string
     status?: string
     availableSlots?: SlotData[]

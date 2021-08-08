@@ -20,6 +20,7 @@ export const DEL_EXISTING_FAVORITE_SLOT = 'DEL_EXISTING_FAVORITE_SLOT'
 export const SET_SEARCH_RESULT = 'SET_SEARCH_RESULT'
 export const ADD_FAV_SITE = 'ADD_FAV_SITE'
 export const DEL_FAV_SITE = 'DEL_FAV_SITE'
+export const SET_FREE = 'SET_FREE'
 
 export const selectState = (state: number): Action => ({ type: SELECT_STATE, data: state })
 export const selectDistrict = (district: number): Action => ({ type: SELECT_DISTRICT, data: district })
@@ -50,3 +51,4 @@ export const delFavSite = (site: Site): Action => {
     const favSite: FavoriteSite = {...site}
     return ({type: DEL_FAV_SITE, data: favSite})
 }
+export const setFree = (free: string): Action => ({type: SET_FREE, data: free})

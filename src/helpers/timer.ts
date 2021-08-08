@@ -284,13 +284,13 @@ const centerFilterCheckPromise = (applicationState: ApplicationState,
 }
 
 function checkVaccineCenter(vaccineCenter: Center, threshold: number, applicationState: ApplicationState, slotData: SlotData[]) {
-    if (vaccineCenter) {
+    if (vaccineCenter && matchFree(vaccineCenter, applicationState.free)) {
         vaccineCenter.sessions.forEach(session => {
             if (session.available_capacity >= threshold) {
                 let isMatch = matchThreshold(session, threshold, applicationState.selectedDose)
                     && matchDose(session, applicationState.selectedDose)
                     && matchVaccine(session, applicationState.selectedVaccine)
-                    && matchAge(session, applicationState.selectedAge);
+                    && matchAge(session, applicationState.selectedAge)
     
                 if (isMatch) {
                     const vaccineFees = vaccineCenter.vaccine_fees ? vaccineCenter
@@ -361,4 +361,9 @@ function matchVaccine(session: VaccineSession, selectedVaccine: string | undefin
 function matchAge(session: VaccineSession, selectedAge: number | undefined) {
     return !selectedAge || selectedAge === 0
         || (selectedAge === session.min_age_limit)
+}
+function matchFree(vaccineCenter: Center, free: string | undefined) {
+    return (!free || free === 'ALL')
+    || (free === 'FREE' && (!vaccineCenter.fee_type || vaccineCenter.fee_type === 'Free'))
+    || (free === 'PAID' && (vaccineCenter.fee_type && vaccineCenter.fee_type === 'Paid'))
 }
